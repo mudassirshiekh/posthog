@@ -85,7 +85,7 @@ runs:
         - name: Install Python dependencies
           shell: bash
           run: |
-              pip install --system -r requirements.txt -r requirements-dev.txt
+              pip install -r requirements.txt -r requirements-dev.txt
 
         - name: Install the working version of hogql-parser
           if: steps.hogql-parser-diff.outputs.changed == 'true'
@@ -111,7 +111,7 @@ runs:
               sudo cp out/usr/local/lib/libantlr4-runtime.so* /usr/lib/
               sudo ldconfig
               cd ..
-              pip install --system ./hogql_parser
+              pip install ./hogql_parser
 
         - name: Set up needed files
           shell: bash

@@ -119,7 +119,7 @@ jobs:
 
             - name: Install Python dependencies
               run: |
-                  pip install --system -r requirements.txt -r requirements-dev.txt
+                  pip install -r requirements.txt -r requirements-dev.txt
 
             - name: Check for syntax errors, import sort, and code style violations
               run: |
@@ -193,7 +193,7 @@ jobs:
 
             - name: Install python dependencies
               run: |
-                  pip install --system -r requirements.txt -r requirements-dev.txt
+                  pip install -r requirements.txt -r requirements-dev.txt
 
             - uses: actions/checkout@v3
               with:
@@ -203,7 +203,7 @@ jobs:
               run: |
                   # We need to ensure we have requirements for the master branch
                   # now also, so we can run migrations up to master.
-                  pip install --system -r requirements.txt -r requirements-dev.txt
+                  pip install -r requirements.txt -r requirements-dev.txt
                   python manage.py migrate
 
             - uses: actions/checkout@v3
@@ -342,7 +342,7 @@ jobs:
             - name: Install python dependencies
               shell: bash
               run: |
-                  pip install --system -r requirements.txt -r requirements-dev.txt
+                  pip install -r requirements.txt -r requirements-dev.txt
 
             - name: Add kafka host to /etc/hosts for kafka connectivity
               run: sudo echo "127.0.0.1 kafka" | sudo tee -a /etc/hosts

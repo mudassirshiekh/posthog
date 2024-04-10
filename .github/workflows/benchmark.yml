@@ -67,11 +67,11 @@ jobs:
 
             - name: Install python dependencies
               run: |
-                  pip install --system -r requirements-dev.txt
-                  pip install --system -r requirements.txt
+                  pip install -r requirements-dev.txt
+                  pip install -r requirements.txt
 
             - name: Install asv
-              run: pip install --system asv==0.5.1 virtualenv
+              run: pip install asv==0.5.1 virtualenv
 
             - name: Set up PostHog
               run: |
