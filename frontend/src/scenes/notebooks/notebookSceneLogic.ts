@@ -3,7 +3,7 @@ import { Scene } from 'scenes/sceneTypes'
 import { urls } from 'scenes/urls'
 
 import { notebooksModel } from '~/models/notebooksModel'
-import { Breadcrumb } from '~/types'
+import { Breadcrumb, BreadcrumbMarker } from '~/types'
 
 import { notebookLogic } from './Notebook/notebookLogic'
 import type { notebookSceneLogicType } from './notebookSceneLogicType'
@@ -37,7 +37,11 @@ export const notebookSceneLogic = kea<notebookSceneLogicType>([
                 },
                 {
                     key: [Scene.Notebook, notebook?.short_id || 'new'],
-                    name: notebook ? notebook?.title || 'Unnamed' : loading ? null : 'Notebook not found',
+                    name: notebook
+                        ? notebook.title || ''
+                        : loading
+                        ? BreadcrumbMarker.Loading
+                        : BreadcrumbMarker.NotFound,
                 },
             ],
         ],

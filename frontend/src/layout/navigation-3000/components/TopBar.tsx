@@ -13,7 +13,7 @@ import React, { useLayoutEffect, useState } from 'react'
 
 import { breadcrumbsLogic } from '~/layout/navigation/Breadcrumbs/breadcrumbsLogic'
 import { navigationLogic } from '~/layout/navigation/navigationLogic'
-import { Breadcrumb as IBreadcrumb } from '~/types'
+import { Breadcrumb as IBreadcrumb, BreadcrumbMarker } from '~/types'
 
 import { navigation3000Logic } from '../navigationLogic'
 
@@ -117,6 +117,18 @@ interface BreadcrumbProps {
     isOnboarding?: boolean
 }
 
+function determineBreadcrumbDisplayName({ breadcrumb, here, isOnboarding }: BreadcrumbProps): string {
+    return isOnboarding && here
+        ? 'Onboarding'
+        : typeof breadcrumb.name === 'string'
+        ? breadcrumb.name
+        : breadcrumb.name === BreadcrumbMarker.NotFound
+        ? 'Not found'
+        : breadcrumb.name === BreadcrumbMarker.LoadingError
+        ? 'Could not load'
+        : 'Unnamed'
+}
+
 function Breadcrumb({ breadcrumb, here, isOnboarding }: BreadcrumbProps): JSX.Element {
     const { renameState } = useValues(breadcrumbsLogic)
     const { tentativelyRename, finishRenaming } = useActions(breadcrumbsLogic)
@@ -124,10 +136,10 @@ function Breadcrumb({ breadcrumb, here, isOnboarding }: BreadcrumbProps): JSX.El
 
     const joinedKey = joinBreadcrumbKey(breadcrumb.key)
 
-    const breadcrumbName = isOnboarding && here ? 'Onboarding' : (breadcrumb.name as string)
+    const breadcrumbName: string = determineBreadcrumbDisplayName({ breadcrumb, here, isOnboarding })
 
     let nameElement: JSX.Element
-    if (breadcrumb.name != null && breadcrumb.onRename) {
+    if (typeof breadcrumb.name === 'string' && breadcrumb.onRename) {
         nameElement = (
             <EditableField
                 name="item-name-small"
@@ -208,13 +220,13 @@ function Here({ breadcrumb, isOnboarding }: HereProps): JSX.Element {
     const { tentativelyRename, finishRenaming } = useActions(breadcrumbsLogic)
 
     const joinedKey = joinBreadcrumbKey(breadcrumb.key)
-    const hereName = isOnboarding ? 'Onboarding' : (breadcrumb.name as string)
+    const hereName: string = determineBreadcrumbDisplayName({ breadcrumb, here: true, isOnboarding })
 
     return (
         <h1 className="TopBar3000__here" data-attr="top-bar-name">
             {breadcrumb.name == null ? (
                 <LemonSkeleton className="w-40 h-4" />
-            ) : breadcrumb.onRename ? (
+            ) : typeof breadcrumb.name === 'string' && breadcrumb.onRename ? (
                 <EditableField
                     name="item-name-large"
                     value={renameState && renameState[0] === joinedKey ? renameState[1] : hereName}

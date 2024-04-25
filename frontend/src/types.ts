@@ -3060,11 +3060,17 @@ export interface DateMappingOption {
     defaultInterval?: IntervalType
 }
 
+export enum BreadcrumbMarker {
+    Loading,
+    NotFound,
+    LoadingError,
+}
+
 interface BreadcrumbBase {
     /** E.g. scene, tab, or scene with item ID. Particularly important for `onRename`. */
     key: string | number | [scene: Scene, key: string | number]
-    /** Name to display. */
-    name: string | null | undefined
+    /** Name to display. Use `BreadcrumbMarker` for special states. */
+    name: string | BreadcrumbMarker
     /** Symbol, e.g. a lettermark or a profile picture. */
     symbol?: React.ReactNode
     /** Whether to show a custom popover */

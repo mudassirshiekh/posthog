@@ -9,7 +9,7 @@ import { Scene } from 'scenes/sceneTypes'
 import { teamLogic } from 'scenes/teamLogic'
 import { urls } from 'scenes/urls'
 
-import { Breadcrumb, PipelineNodeTab, PipelineStage, PluginType } from '~/types'
+import { Breadcrumb, BreadcrumbMarker, PipelineNodeTab, PipelineStage, PluginType } from '~/types'
 
 import {
     defaultConfigForPlugin,
@@ -201,7 +201,7 @@ export const pipelineNodeLogic = kea<pipelineNodeLogicType>([
                 },
                 {
                     key: [Scene.PipelineNode, id],
-                    name: node ? node.name || 'Unnamed' : nodeLoading ? null : 'Not found',
+                    name: node ? node.name : nodeLoading ? null : BreadcrumbMarker.NotFound,
                 },
             ],
         ],

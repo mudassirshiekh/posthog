@@ -129,7 +129,7 @@ export const personsManagementSceneLogic = kea<personsManagementSceneLogicType>(
                           }
                         : {
                               key: 'loading',
-                              name: 'Loading...',
+                              name: null,
                           },
                 ]
             },
