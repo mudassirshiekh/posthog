@@ -11,8 +11,10 @@ import { BatchExportService, PipelineStage, PluginType } from '~/types'
 
 import { pipelineDestinationsLogic } from './destinationsLogic'
 import { frontendAppsLogic } from './frontendAppsLogic'
+import { PipelineBatchExportConfiguration } from './PipelineBatchExportConfiguration'
 import { PIPELINE_TAB_TO_NODE_STAGE } from './PipelineNode'
 import { pipelineNodeNewLogic, PipelineNodeNewLogicProps } from './pipelineNodeNewLogic'
+import { PipelinePluginConfiguration } from './PipelinePluginConfiguration'
 import { pipelineTransformationsLogic } from './transformationsLogic'
 import { PipelineBackend } from './types'
 import { getBatchExportUrl, RenderApp, RenderBatchExportIcon } from './utils'
@@ -95,13 +97,13 @@ export function PipelineNodeNew(
     }
 
     if (pluginId) {
-        return <>Plugin ID {pluginId}</>
+        return <PipelinePluginConfiguration stage={stage} pluginId={pluginId} />
     }
     if (batchExportDestination) {
         if (stage !== PipelineStage.Destination) {
             return <NotFound object={batchExportDestination} />
         }
-        return <>Batch Export Destination {batchExportDestination}</>
+        return <PipelineBatchExportConfiguration service={batchExportDestination} />
     }
 
     let targets: TableEntry[] = []
@@ -177,7 +179,12 @@ function nodeOptionsTable(stage: PipelineStage, targets: TableEntry[], loading: 
                                 <LemonButton
                                     type="primary"
                                     data-attr={`new-${stage}-${target.id}`}
-                                    to={urls.pipelineNodeNew(stage, target.id)}
+                                    // TODO: we shouldn't load a new page, but to= errors with
+                                    // Error: Rendered fewer hooks than expected. This may be caused by an accidental early return statement
+                                    // to={urls.pipelineNodeNew(stage, target.id)}
+                                    onClick={() =>
+                                        window.open(urls.pipelineNodeNew(stage, target.id), '_self')?.focus()
+                                    }
                                 >
                                     Create
                                 </LemonButton>
