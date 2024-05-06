@@ -90,7 +90,6 @@ export function PipelineNodeNew(
     params: { stage?: string; pluginIdOrBatchExportDestination?: string } = {}
 ): JSX.Element {
     const { stage, pluginId, batchExportDestination } = paramsToProps({ params })
-    const { batchExportServiceNames } = useValues(pipelineNodeNewLogic)
 
     if (!stage) {
         return <NotFound object="pipeline app stage" />
@@ -106,28 +105,46 @@ export function PipelineNodeNew(
         return <PipelineBatchExportConfiguration service={batchExportDestination} />
     }
 
-    let targets: TableEntry[] = []
-    let loadingAll = false
     if (stage === PipelineStage.Transformation) {
-        // Show a list of transformations
-        const { plugins, loading } = useValues(pipelineTransformationsLogic)
-        loadingAll = loading
-        targets = Object.values(plugins).map(convertPluginToTableEntry)
+        return <TransformationOptionsTable />
     } else if (stage === PipelineStage.Destination) {
-        const { plugins, loading } = useValues(pipelineDestinationsLogic)
-        loadingAll = loading
-        const pluginTargets = Object.values(plugins).map(convertPluginToTableEntry)
-        const batchExportTargets = Object.values(batchExportServiceNames).map(convertBatchExportToTableEntry)
-        targets = [...batchExportTargets, ...pluginTargets]
+        return <DestinationOptionsTable />
     } else if (stage === PipelineStage.SiteApp) {
-        const { plugins, loading } = useValues(frontendAppsLogic)
-        targets = Object.values(plugins).map(convertPluginToTableEntry)
-        loadingAll = loading
+        return <SiteAppOptionsTable />
     }
-    return nodeOptionsTable(stage, targets, loadingAll)
+    return <NotFound object="pipeline app stage" />
 }
 
-function nodeOptionsTable(stage: PipelineStage, targets: TableEntry[], loading: boolean): JSX.Element {
+function TransformationOptionsTable(): JSX.Element {
+    const { plugins, loading } = useValues(pipelineTransformationsLogic)
+    const targets = Object.values(plugins).map(convertPluginToTableEntry)
+    return <NodeOptionsTable stage={PipelineStage.Transformation} targets={targets} loading={loading} />
+}
+
+function DestinationOptionsTable(): JSX.Element {
+    const { batchExportServiceNames } = useValues(pipelineNodeNewLogic)
+    const { plugins, loading } = useValues(pipelineDestinationsLogic)
+    const pluginTargets = Object.values(plugins).map(convertPluginToTableEntry)
+    const batchExportTargets = Object.values(batchExportServiceNames).map(convertBatchExportToTableEntry)
+    const targets = [...batchExportTargets, ...pluginTargets]
+    return <NodeOptionsTable stage={PipelineStage.Destination} targets={targets} loading={loading} />
+}
+
+function SiteAppOptionsTable(): JSX.Element {
+    const { plugins, loading } = useValues(frontendAppsLogic)
+    const targets = Object.values(plugins).map(convertPluginToTableEntry)
+    return <NodeOptionsTable stage={PipelineStage.SiteApp} targets={targets} loading={loading} />
+}
+
+function NodeOptionsTable({
+    stage,
+    targets,
+    loading,
+}: {
+    stage: PipelineStage
+    targets: TableEntry[]
+    loading: boolean
+}): JSX.Element {
     return (
         <>
             <LemonTable
@@ -179,12 +196,7 @@ function nodeOptionsTable(stage: PipelineStage, targets: TableEntry[], loading: 
                                 <LemonButton
                                     type="primary"
                                     data-attr={`new-${stage}-${target.id}`}
-                                    // TODO: we shouldn't load a new page, but to= errors with
-                                    // Error: Rendered fewer hooks than expected. This may be caused by an accidental early return statement
-                                    // to={urls.pipelineNodeNew(stage, target.id)}
-                                    onClick={() =>
-                                        window.open(urls.pipelineNodeNew(stage, target.id), '_self')?.focus()
-                                    }
+                                    to={urls.pipelineNodeNew(stage, target.id)}
                                 >
                                     Create
                                 </LemonButton>
