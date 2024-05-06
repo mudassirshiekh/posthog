@@ -730,12 +730,16 @@ export class DB {
 
         const values = [...updateValues, person.id].map(sanitizeJsonbValue)
 
-        // Potentially overriding values badly if there was an update to the person after computing updateValues above
-        const queryString = `UPDATE posthog_person SET version = COALESCE(version, 0)::numeric + 1, ${Object.keys(
-            update
-        ).map((field, index) => `"${sanitizeSqlIdentifier(field)}" = $${index + 1}`)} WHERE id = $${
-            Object.values(update).length + 1
+        let versionString = 'COALESCE(version, 0)::numeric + 1'
+        if (update.version) {
+            versionString = update.version.toString()
+            delete update['version']
         }
+
+        // Potentially overriding values badly if there was an update to the person after computing updateValues above
+        const queryString = `UPDATE posthog_person SET version = ${versionString}, ${Object.keys(update).map(
+            (field, index) => `"${sanitizeSqlIdentifier(field)}" = $${index + 1}`
+        )} WHERE id = $${Object.values(update).length + 1}
         RETURNING *`
 
         const { rows } = await this.postgres.query<RawPerson>(
