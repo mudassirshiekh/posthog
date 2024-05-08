@@ -564,6 +564,7 @@ export const dashboardLogic = kea<dashboardLogicType>([
             false,
             {
                 setEditMode: (_, { editMode }) => editMode,
+                setDates: () => true,
             },
         ],
     })),

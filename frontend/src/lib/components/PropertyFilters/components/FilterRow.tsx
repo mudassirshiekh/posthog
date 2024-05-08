@@ -96,7 +96,7 @@ export const FilterRow = React.memo(function FilterRow({
                                 item={item}
                                 disabled={disabled}
                             />
-                        ) : !disabled ? (
+                        ) : (
                             <LemonButton
                                 onClick={() => setOpen(!open)}
                                 className="new-prop-filter"
@@ -105,10 +105,11 @@ export const FilterRow = React.memo(function FilterRow({
                                 size="small"
                                 icon={<IconPlus />}
                                 sideIcon={null}
+                                disabled={disabled}
                             >
                                 {label}
                             </LemonButton>
-                        ) : undefined}
+                        )}
                     </Popover>
                 )}
                 {key && showConditionBadge && index + 1 < totalCount && <OperandTag operand="and" />}

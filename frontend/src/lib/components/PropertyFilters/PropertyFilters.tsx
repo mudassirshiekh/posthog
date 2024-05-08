@@ -59,13 +59,13 @@ export function PropertyFilters({
     buttonText = 'Add filter',
     hasRowOperator = true,
     sendAllKeyUpdates = false,
-    allowNew = true,
     openOnInsert = false,
     errorMessages = null,
     propertyAllowList,
     allowRelativeDateOptions,
     disabled = false,
-}: PropertyFiltersProps): JSX.Element {
+    allowNew = !disabled,
+}: PropertyFiltersProps): JSX.Element | null {
     const logicProps = { propertyFilters, onChange, pageKey, sendAllKeyUpdates }
     const { filters, filtersWithNew } = useValues(propertyFilterLogic(logicProps))
     const { remove, setFilters } = useActions(propertyFilterLogic(logicProps))
@@ -81,16 +81,23 @@ export function PropertyFilters({
         setAllowOpenOnInsert(true)
     }, [])
 
+    const showNestedArrowEffectively = showNestedArrow && !disablePopover
+    const items = allowNew ? filtersWithNew : filters
+
+    if (!showNestedArrowEffectively && items.length === 0) {
+        return null // Nothing to render
+    }
+
     return (
         <div className="PropertyFilters">
-            {showNestedArrow && !disablePopover && (
+            {showNestedArrowEffectively && (
                 <div className="PropertyFilters__prefix">
                     <>&#8627;</>
                 </div>
             )}
             <div className="PropertyFilters__content">
                 <BindLogic logic={propertyFilterLogic} props={logicProps}>
-                    {(allowNew ? filtersWithNew : filters).map((item: AnyPropertyFilter, index: number) => {
+                    {items.map((item: AnyPropertyFilter, index: number) => {
                         return (
                             <React.Fragment key={index}>
                                 {logicalRowDivider && index > 0 && index !== filtersWithNew.length - 1 && (
