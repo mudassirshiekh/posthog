@@ -406,10 +406,12 @@ class StickinessQueryRunner(QueryRunner):
 
     @cached_property
     def query_compare_to_date_range(self):
-        return QueryCompareToDateRange(
-            date_range=self.query.dateRange,
-            team=self.team,
-            interval=self.query.interval,
-            now=datetime.now(),
-            compare_to=self.query.stickinessFilter.compareTo,
-        )
+        if self.query.stickinessFilter is not None and isinstance(self.query.stickinessFilter.compareTo, str):
+            return QueryCompareToDateRange(
+                date_range=self.query.dateRange,
+                team=self.team,
+                interval=self.query.interval,
+                now=datetime.now(),
+                compare_to=self.query.stickinessFilter.compareTo,
+            )
+        return None

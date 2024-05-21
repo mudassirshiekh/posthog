@@ -570,13 +570,15 @@ class TrendsQueryRunner(QueryRunner):
 
     @cached_property
     def query_compare_to_date_range(self):
-        return QueryCompareToDateRange(
-            date_range=self.query.dateRange,
-            team=self.team,
-            interval=self.query.interval,
-            now=datetime.now(),
-            compare_to=self.query.trendsFilter.compareTo,
-        )
+        if self.query.trendsFilter is not None and isinstance(self.query.trendsFilter.compareTo, str):
+            return QueryCompareToDateRange(
+                date_range=self.query.dateRange,
+                team=self.team,
+                interval=self.query.interval,
+                now=datetime.now(),
+                compare_to=self.query.trendsFilter.compareTo,
+            )
+        return None
 
     def series_event(self, series: Union[EventsNode, ActionsNode, DataWarehouseNode]) -> str | None:
         if isinstance(series, EventsNode):
