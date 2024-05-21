@@ -575,6 +575,7 @@ class TrendsQueryRunner(QueryRunner):
             team=self.team,
             interval=self.query.interval,
             now=datetime.now(),
+            compare_to=self.query.trendsFilter.compareTo,
         )
 
     def series_event(self, series: Union[EventsNode, ActionsNode, DataWarehouseNode]) -> str | None:
