@@ -33,6 +33,7 @@ from posthog.hogql_queries.insights.trends.trends_actors_query_builder import Tr
 from posthog.hogql_queries.insights.trends.series_with_extras import SeriesWithExtras
 from posthog.hogql_queries.query_runner import QueryRunner
 from posthog.hogql_queries.utils.formula_ast import FormulaAST
+from posthog.hogql_queries.utils.query_compare_to_date_range import QueryCompareToDateRange
 from posthog.hogql_queries.utils.query_date_range import QueryDateRange
 from posthog.hogql_queries.utils.query_previous_period_date_range import (
     QueryPreviousPeriodDateRange,
@@ -126,7 +127,10 @@ class TrendsQueryRunner(QueryRunner):
                 if not series.is_previous_period_series:
                     query_date_range = self.query_date_range
                 else:
-                    query_date_range = self.query_previous_date_range
+                    if not series.compare_to:
+                        query_date_range = self.query_previous_date_range
+                    else:
+                        query_date_range = self.query_compare_to_date_range
 
                 query_builder = TrendsQueryBuilder(
                     trends_query=series.overriden_query or self.query,
@@ -564,6 +568,15 @@ class TrendsQueryRunner(QueryRunner):
             now=datetime.now(),
         )
 
+    @cached_property
+    def query_compare_to_date_range(self):
+        return QueryCompareToDateRange(
+            date_range=self.query.dateRange,
+            team=self.team,
+            interval=self.query.interval,
+            now=datetime.now(),
+        )
+
     def series_event(self, series: Union[EventsNode, ActionsNode, DataWarehouseNode]) -> str | None:
         if isinstance(series, EventsNode):
             return series.event
@@ -637,6 +650,7 @@ class TrendsQueryRunner(QueryRunner):
                         SeriesWithExtras(
                             series=series.series,
                             series_order=series.series_order,
+                            compare_to=series.compare_to,
                             is_previous_period_series=series.is_previous_period_series,
                             overriden_query=copied_query,
                             aggregate_values=self._trends_display.is_total_value(),
@@ -662,10 +676,13 @@ class TrendsQueryRunner(QueryRunner):
                         series=series.series,
                         series_order=series.series_order,
                         is_previous_period_series=True,
+                        compare_to=self.query.trendsFilter.compareTo,
                         overriden_query=series.overriden_query,
                         aggregate_values=self._trends_display.is_total_value(),
                     )
                 )
+                print(self.query.trendsFilter.compareTo)
+
             series_with_extras = updated_series
 
         return series_with_extras
