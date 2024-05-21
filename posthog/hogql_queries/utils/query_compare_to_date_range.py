@@ -5,8 +5,6 @@ from posthog.hogql_queries.utils.query_date_range import QueryDateRange
 from posthog.models.team import Team
 from posthog.schema import DateRange, IntervalType
 from posthog.utils import (
-    get_compare_period_dates,
-    relative_date_parse_with_delta_mapping,
     relative_date_parse,
 )
 
@@ -35,9 +33,11 @@ class QueryCompareToDateRange(QueryDateRange):
         current_period_date_from = super().date_from()
         current_period_date_to = super().date_to()
 
+        start_date = relative_date_parse(self.compare_to, self._team.timezone_info, now=current_period_date_from)
+
         return (
-            relative_date_parse(self.compare_to, self._team.timezone_info, now=current_period_date_from),
-            relative_date_parse(self.compare_to, self._team.timezone_info, now=current_period_date_to),
+            start_date,
+            start_date + (current_period_date_to - current_period_date_from),
         )
 
     def date_to(self) -> datetime:
