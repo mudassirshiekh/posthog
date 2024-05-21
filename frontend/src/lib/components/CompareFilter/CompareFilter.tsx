@@ -25,6 +25,7 @@ export function CompareFilter(): JSX.Element | null {
                 dateRangeFilterSuffixLabel="before"
                 allowPeriod={true}
                 onChange={(compareTo) => {
+                    console.log(compareTo)
                     updateInsightFilter({ compareTo })
                 }}
             />

@@ -24,6 +24,7 @@ export type RollingDateFilterLogicPropsType = {
     dateFrom?: Dayjs | string | null
     max?: number | null
     pageKey?: string
+    allowPeriod?: boolean
 }
 
 const counterDefault = (selected: boolean | undefined, dateFrom: Dayjs | string | null | undefined): number => {
@@ -36,12 +37,19 @@ const counterDefault = (selected: boolean | undefined, dateFrom: Dayjs | string 
     return 3
 }
 
-const dateOptionDefault = (selected: boolean | undefined, dateFrom: Dayjs | string | null | undefined): DateOption => {
+const dateOptionDefault = (
+    selected: boolean | undefined,
+    dateFrom: Dayjs | string | null | undefined,
+    allowPeriod: boolean | undefined
+): DateOption => {
     if (selected && dateFrom && typeof dateFrom === 'string') {
         const dateOption = dateOptionsMap[dateFrom.slice(-1)]
         if (dateOption) {
             return dateOption
         }
+    }
+    if (allowPeriod) {
+        return 'period'
     }
     return 'days'
 }
@@ -74,7 +82,7 @@ export const rollingDateRangeFilterLogic = kea<rollingDateRangeFilterLogicType>(
             },
         ],
         dateOption: [
-            dateOptionDefault(props.selected, props.dateFrom),
+            dateOptionDefault(props.selected, props.dateFrom, props.allowPeriod),
             {
                 setDateOption: (_, { option }) => option,
             },
@@ -94,6 +102,8 @@ export const rollingDateRangeFilterLogic = kea<rollingDateRangeFilterLogicType>(
                     return ''
                 }
                 switch (dateOption) {
+                    case 'period':
+                        return ''
                     case 'years':
                         return `-${counter}y`
                     case 'quarters':

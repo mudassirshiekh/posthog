@@ -47,7 +47,7 @@ export function RollingDateRangeFilter({
     allowedDateOptions = ['days', 'weeks', 'months', 'years'],
     fullWidth,
 }: RollingDateRangeFilterProps): JSX.Element {
-    const logicProps = { onChange, dateFrom, selected, max, pageKey }
+    const logicProps = { onChange, dateFrom, selected, max, pageKey, allowPeriod }
     const { increaseCounter, decreaseCounter, setCounter, setDateOption, toggleDateOptionsSelector, select } =
         useActions(rollingDateRangeFilterLogic(logicProps))
     const { counter, dateOption, formattedDate, startOfDateRange } = useValues(rollingDateRangeFilterLogic(logicProps))
