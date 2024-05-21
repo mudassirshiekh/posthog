@@ -7,7 +7,7 @@ import { insightVizDataLogic } from 'scenes/insights/insightVizDataLogic'
 export function CompareFilter(): JSX.Element | null {
     const { insightProps, canEditInsight } = useValues(insightLogic)
 
-    const { compare, supportsCompare } = useValues(insightVizDataLogic(insightProps))
+    const { compare, supportsCompare, compareTo } = useValues(insightVizDataLogic(insightProps))
     const { updateInsightFilter } = useActions(insightVizDataLogic(insightProps))
 
     const disabled: boolean = !canEditInsight || !supportsCompare
@@ -23,6 +23,8 @@ export function CompareFilter(): JSX.Element | null {
                 dateRangeFilterLabel="Compare to "
                 dateRangeFilterSuffixLabel=" earlier"
                 allowPeriod={true}
+                dateFrom={compareTo}
+                inUse={true}
                 onChange={(compareTo) => {
                     updateInsightFilter({ compare: true, compareTo })
                 }}

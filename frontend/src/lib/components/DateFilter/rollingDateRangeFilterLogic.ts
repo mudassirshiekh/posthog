@@ -19,7 +19,7 @@ const dateOptionsMap = {
 export type DateOption = (typeof dateOptionsMap)[keyof typeof dateOptionsMap]
 
 export type RollingDateFilterLogicPropsType = {
-    selected?: boolean
+    inUse?: boolean
     onChange?: (fromDate: string) => void
     dateFrom?: Dayjs | string | null
     max?: number | null
@@ -27,8 +27,8 @@ export type RollingDateFilterLogicPropsType = {
     allowPeriod?: boolean
 }
 
-const counterDefault = (selected: boolean | undefined, dateFrom: Dayjs | string | null | undefined): number => {
-    if (selected && dateFrom && typeof dateFrom === 'string') {
+const counterDefault = (inUse: boolean | undefined, dateFrom: Dayjs | string | null | undefined): number => {
+    if (inUse && dateFrom && typeof dateFrom === 'string') {
         const counter = parseInt(dateFrom.slice(1, -1))
         if (counter) {
             return counter
@@ -38,11 +38,11 @@ const counterDefault = (selected: boolean | undefined, dateFrom: Dayjs | string 
 }
 
 const dateOptionDefault = (
-    selected: boolean | undefined,
+    inUse: boolean | undefined,
     dateFrom: Dayjs | string | null | undefined,
     allowPeriod: boolean | undefined
 ): DateOption => {
-    if (selected && dateFrom && typeof dateFrom === 'string') {
+    if (inUse && dateFrom && typeof dateFrom === 'string') {
         const dateOption = dateOptionsMap[dateFrom.slice(-1)]
         if (dateOption) {
             return dateOption
@@ -68,7 +68,7 @@ export const rollingDateRangeFilterLogic = kea<rollingDateRangeFilterLogicType>(
     }),
     reducers(({ props }) => ({
         counter: [
-            counterDefault(props.selected, props.dateFrom) as number | null,
+            counterDefault(props.inUse, props.dateFrom) as number | null,
             {
                 increaseCounter: (state) => (state ? (!props.max || state < props.max ? state + 1 : state) : 1),
                 decreaseCounter: (state) => {
@@ -82,7 +82,7 @@ export const rollingDateRangeFilterLogic = kea<rollingDateRangeFilterLogicType>(
             },
         ],
         dateOption: [
-            dateOptionDefault(props.selected, props.dateFrom, props.allowPeriod),
+            dateOptionDefault(props.inUse, props.dateFrom, props.allowPeriod),
             {
                 setDateOption: (_, { option }) => option,
             },

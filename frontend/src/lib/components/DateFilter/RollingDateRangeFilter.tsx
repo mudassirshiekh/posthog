@@ -18,7 +18,10 @@ const dateOptions: LemonSelectOptionLeaf<DateOption>[] = [
 
 type RollingDateRangeFilterProps = {
     pageKey?: string
+    // specifies if the filter is selected in the dropdown (to darken)
     selected?: boolean
+    // specifies if the filter is in use (causes it to read props)
+    inUse?: boolean
     dateFrom?: string | null | dayjs.Dayjs
     max?: number | null
     onChange?: (fromDate: string) => void
@@ -28,7 +31,7 @@ type RollingDateRangeFilterProps = {
     }
     dateRangeFilterLabel?: string
     dateRangeFilterSuffixLabel?: string
-    allowPeriod: boolean
+    allowPeriod?: boolean
     allowedDateOptions?: DateOption[]
     fullWidth?: LemonButtonProps['fullWidth']
 }
@@ -39,6 +42,7 @@ export function RollingDateRangeFilter({
     popover,
     dateFrom,
     selected,
+    inUse,
     max,
     dateRangeFilterLabel = 'In the last',
     dateRangeFilterSuffixLabel,
@@ -47,7 +51,7 @@ export function RollingDateRangeFilter({
     allowedDateOptions = ['days', 'weeks', 'months', 'years'],
     fullWidth,
 }: RollingDateRangeFilterProps): JSX.Element {
-    const logicProps = { onChange, dateFrom, selected, max, pageKey, allowPeriod }
+    const logicProps = { onChange, dateFrom, inUse: inUse || selected, max, pageKey, allowPeriod }
     const { increaseCounter, decreaseCounter, setCounter, setDateOption, toggleDateOptionsSelector, select } =
         useActions(rollingDateRangeFilterLogic(logicProps))
     const { counter, dateOption, formattedDate, startOfDateRange } = useValues(rollingDateRangeFilterLogic(logicProps))

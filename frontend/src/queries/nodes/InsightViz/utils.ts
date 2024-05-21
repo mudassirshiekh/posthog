@@ -56,6 +56,15 @@ export const getCompare = (query: InsightQueryNode): boolean | undefined => {
     return undefined
 }
 
+export const getCompareTo = (query: InsightQueryNode): string | undefined => {
+    if (isStickinessQuery(query)) {
+        return query.stickinessFilter?.compareTo
+    } else if (isTrendsQuery(query)) {
+        return query.trendsFilter?.compareTo
+    }
+    return undefined
+}
+
 export const getFormula = (query: InsightQueryNode): string | undefined => {
     if (isTrendsQuery(query)) {
         return query.trendsFilter?.formula

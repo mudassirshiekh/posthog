@@ -834,6 +834,7 @@ export type StickinessFilterLegacy = Omit<
 
 export type StickinessFilter = {
     compare?: StickinessFilterLegacy['compare']
+    compareTo?: StickinessFilterLegacy['compare_to']
     display?: StickinessFilterLegacy['display']
     showLegend?: StickinessFilterLegacy['show_legend']
     showValuesOnSeries?: StickinessFilterLegacy['show_values_on_series']

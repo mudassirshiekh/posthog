@@ -861,6 +861,7 @@ class StickinessFilter(BaseModel):
         extra="forbid",
     )
     compare: Optional[bool] = None
+    compareTo: Optional[str] = None
     display: Optional[ChartDisplayType] = None
     hidden_legend_indexes: Optional[list[float]] = None
     showLegend: Optional[bool] = None
@@ -872,6 +873,7 @@ class StickinessFilterLegacy(BaseModel):
         extra="forbid",
     )
     compare: Optional[bool] = None
+    compare_to: Optional[str] = None
     display: Optional[ChartDisplayType] = None
     hidden_legend_indexes: Optional[list[float]] = None
     show_legend: Optional[bool] = None

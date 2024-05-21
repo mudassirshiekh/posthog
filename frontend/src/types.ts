@@ -2053,6 +2053,7 @@ export interface TrendsFilterType extends FilterType {
 
 export interface StickinessFilterType extends FilterType {
     compare?: boolean
+    compare_to?: string
     /** @deprecated */
     shown_as?: ShownAsValue
     display?: ChartDisplayType

@@ -305,6 +305,7 @@ def _insight_filter(filter: dict):
                 showLegend=filter.get("show_legend"),
                 # hidden_legend_indexes=cleanHiddenLegendIndexes(filter.get('hidden_legend_keys')),
                 compare=filter.get("compare"),
+                compareTo=filter.get("compare_to"),
                 aggregationAxisFormat=filter.get("aggregation_axis_format"),
                 aggregationAxisPrefix=filter.get("aggregation_axis_prefix"),
                 aggregationAxisPostfix=filter.get("aggregation_axis_postfix"),

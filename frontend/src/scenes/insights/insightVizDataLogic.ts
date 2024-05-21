@@ -23,6 +23,7 @@ import { queryNodeToFilter, seriesNodeToFilter } from '~/queries/nodes/InsightQu
 import {
     getBreakdown,
     getCompare,
+    getCompareTo,
     getDisplay,
     getFormula,
     getInterval,
@@ -163,6 +164,7 @@ export const insightVizDataLogic = kea<insightVizDataLogicType>([
         breakdownFilter: [(s) => [s.querySource], (q) => (q ? getBreakdown(q) : null)],
         display: [(s) => [s.querySource], (q) => (q ? getDisplay(q) : null)],
         compare: [(s) => [s.querySource], (q) => (q ? getCompare(q) : null)],
+        compareTo: [(s) => [s.querySource], (q) => (q ? getCompareTo(q) : null)],
         formula: [(s) => [s.querySource], (q) => (q ? getFormula(q) : null)],
         series: [(s) => [s.querySource], (q) => (q ? getSeries(q) : null)],
         interval: [(s) => [s.querySource], (q) => (q ? getInterval(q) : null)],
