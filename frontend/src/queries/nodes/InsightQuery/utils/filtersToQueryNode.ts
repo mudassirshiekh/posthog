@@ -424,7 +424,7 @@ export const stickinessFilterToQuery = (filters: Record<string, any>): Stickines
     return objectCleanWithEmpty({
         display: filters.display,
         compare: filters.compare,
-        compareTo: filters.compareTo,
+        compareTo: filters.compare_to,
         showLegend: filters.show_legend,
         hidden_legend_indexes: cleanHiddenLegendIndexes(filters.hidden_legend_keys),
         showValuesOnSeries: filters.show_values_on_series,

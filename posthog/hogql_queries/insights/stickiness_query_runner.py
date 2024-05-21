@@ -16,6 +16,7 @@ from posthog.hogql.property import action_to_expr, property_to_expr
 from posthog.hogql.query import execute_hogql_query
 from posthog.hogql.timings import HogQLTimings
 from posthog.hogql_queries.query_runner import QueryRunner
+from posthog.hogql_queries.utils.query_compare_to_date_range import QueryCompareToDateRange
 from posthog.hogql_queries.utils.query_date_range import QueryDateRange
 from posthog.hogql_queries.utils.query_previous_period_date_range import QueryPreviousPeriodDateRange
 from posthog.models import Team
@@ -40,9 +41,11 @@ class SeriesWithExtras:
         self,
         series: EventsNode | ActionsNode | DataWarehouseNode,
         is_previous_period_series: Optional[bool],
+        compare_to: Optional[str] = None,
     ):
         self.series = series
         self.is_previous_period_series = is_previous_period_series
+        self.compare_to = compare_to
 
 
 class StickinessQueryRunner(QueryRunner):
@@ -368,6 +371,7 @@ class StickinessQueryRunner(QueryRunner):
                     SeriesWithExtras(
                         series=series.series,
                         is_previous_period_series=True,
+                        compare_to=self.query.stickinessFilter.compareTo,
                     )
                 )
             series_with_extras = updated_series
@@ -376,7 +380,9 @@ class StickinessQueryRunner(QueryRunner):
 
     def date_range(self, series: SeriesWithExtras):
         if series.is_previous_period_series:
-            return self.query_previous_date_range
+            if not series.compare_to:
+                return self.query_previous_date_range
+            return self.query_compare_to_date_range
 
         return self.query_date_range
 
@@ -396,4 +402,14 @@ class StickinessQueryRunner(QueryRunner):
             team=self.team,
             interval=self.query.interval,
             now=datetime.now(),
+        )
+
+    @cached_property
+    def query_compare_to_date_range(self):
+        return QueryCompareToDateRange(
+            date_range=self.query.dateRange,
+            team=self.team,
+            interval=self.query.interval,
+            now=datetime.now(),
+            compare_to=self.query.stickinessFilter.compareTo,
         )

@@ -370,6 +370,7 @@ describe('filtersToQueryNode', () => {
                 show_legend: true,
                 hidden_legend_keys: { 0: true, 10: true },
                 compare: true,
+                compare_to: '-4d',
                 aggregation_axis_format: 'numeric',
                 aggregation_axis_prefix: '£',
                 aggregation_axis_postfix: '%',
@@ -390,6 +391,7 @@ describe('filtersToQueryNode', () => {
                     showLegend: true,
                     hidden_legend_indexes: [0, 10],
                     compare: true,
+                    compareTo: '-4d',
                     aggregationAxisFormat: 'numeric',
                     aggregationAxisPrefix: '£',
                     aggregationAxisPostfix: '%',
@@ -609,6 +611,8 @@ describe('filtersToQueryNode', () => {
             const filters: Partial<StickinessFilterType> = {
                 insight: InsightType.STICKINESS,
                 compare: true,
+                compare_to: '-4d',
+
                 show_legend: true,
                 hidden_legend_keys: { 0: true, 10: true },
                 shown_as: ShownAsValue.STICKINESS,
@@ -621,6 +625,7 @@ describe('filtersToQueryNode', () => {
                 kind: NodeKind.StickinessQuery,
                 stickinessFilter: {
                     compare: true,
+                    compareTo: '-4d',
                     showLegend: true,
                     hidden_legend_indexes: [0, 10],
                     display: ChartDisplayType.ActionsLineGraph,

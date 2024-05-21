@@ -74,6 +74,7 @@ describe('queryNodeToFilter', () => {
             trendsFilter: {
                 smoothingIntervals: 3,
                 compare: true,
+                compareTo: '-4d',
                 formula: 'A + B',
                 display: ChartDisplayType.ActionsBar,
                 // breakdown_histogram_bin_count?: TrendsFilterLegacy['breakdown_histogram_bin_count']
@@ -100,6 +101,7 @@ describe('queryNodeToFilter', () => {
             display: ChartDisplayType.ActionsBar,
             formula: 'A + B',
             compare: true,
+            compare_to: '-4d',
             decimal_places: 5,
             aggregation_axis_format: 'numeric',
             aggregation_axis_prefix: 'M',
