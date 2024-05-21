@@ -28,6 +28,7 @@ type RollingDateRangeFilterProps = {
     }
     dateRangeFilterLabel?: string
     dateRangeFilterSuffixLabel?: string
+    allowPeriod: boolean
     allowedDateOptions?: DateOption[]
     fullWidth?: LemonButtonProps['fullWidth']
 }
@@ -42,6 +43,7 @@ export function RollingDateRangeFilter({
     dateRangeFilterLabel = 'In the last',
     dateRangeFilterSuffixLabel,
     pageKey,
+    allowPeriod,
     allowedDateOptions = ['days', 'weeks', 'months', 'years'],
     fullWidth,
 }: RollingDateRangeFilterProps): JSX.Element {
@@ -60,30 +62,32 @@ export function RollingDateRangeFilter({
                 fullWidth={fullWidth}
             >
                 <p className="RollingDateRangeFilter__label">{dateRangeFilterLabel}</p>
-                <div className="RollingDateRangeFilter__counter" onClick={(e): void => e.stopPropagation()}>
-                    <span
-                        className="RollingDateRangeFilter__counter__step"
-                        onClick={decreaseCounter}
-                        title="Decrease rolling date range"
-                    >
-                        -
-                    </span>
-                    <LemonInput
-                        data-attr="rolling-date-range-input"
-                        type="number"
-                        value={counter ?? 0}
-                        min={0}
-                        placeholder="0"
-                        onChange={(value) => setCounter(value)}
-                    />
-                    <span
-                        className="RollingDateRangeFilter__counter__step"
-                        onClick={increaseCounter}
-                        title="Increase rolling date range"
-                    >
-                        +
-                    </span>
-                </div>
+                {dateOption === 'period' ? null : (
+                    <div className="RollingDateRangeFilter__counter" onClick={(e): void => e.stopPropagation()}>
+                        <span
+                            className="RollingDateRangeFilter__counter__step"
+                            onClick={decreaseCounter}
+                            title="Decrease rolling date range"
+                        >
+                            -
+                        </span>
+                        <LemonInput
+                            data-attr="rolling-date-range-input"
+                            type="number"
+                            value={counter ?? 0}
+                            min={0}
+                            placeholder="0"
+                            onChange={(value) => setCounter(value)}
+                        />
+                        <span
+                            className="RollingDateRangeFilter__counter__step"
+                            onClick={increaseCounter}
+                            title="Increase rolling date range"
+                        >
+                            +
+                        </span>
+                    </div>
+                )}
                 <LemonSelect
                     className="RollingDateRangeFilter__select"
                     data-attr="rolling-date-range-date-options-selector"
@@ -95,7 +99,10 @@ export function RollingDateRangeFilter({
                         toggleDateOptionsSelector()
                     }}
                     dropdownMatchSelectWidth={false}
-                    options={dateOptions.filter((option) => allowedDateOptions.includes(option.value))}
+                    options={(allowPeriod
+                        ? [{ value: 'period', label: 'period' } as LemonSelectOptionLeaf<DateOption>]
+                        : []
+                    ).concat(dateOptions.filter((option) => allowedDateOptions.includes(option.value)))}
                     menu={{
                         ...popover,
                         className: 'RollingDateRangeFilter__popover',

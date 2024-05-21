@@ -23,6 +23,7 @@ export function CompareFilter(): JSX.Element | null {
             <RollingDateRangeFilter
                 dateRangeFilterLabel=""
                 dateRangeFilterSuffixLabel="before"
+                allowPeriod={true}
                 onChange={(compareTo) => {
                     updateInsightFilter({ compareTo })
                 }}

@@ -13,6 +13,7 @@ const dateOptionsMap = {
     w: 'weeks',
     d: 'days',
     h: 'hours',
+    p: 'period',
 } as const
 
 export type DateOption = (typeof dateOptionsMap)[keyof typeof dateOptionsMap]
