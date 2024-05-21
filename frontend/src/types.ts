@@ -2032,6 +2032,7 @@ export interface TrendsFilterType extends FilterType {
     // 7 days to remove weekly variation. Smoothing is performed as a moving average.
     smoothing_intervals?: number
     compare?: boolean
+    compare_to?: string
     formula?: string
     /** @deprecated */
     shown_as?: ShownAsValue

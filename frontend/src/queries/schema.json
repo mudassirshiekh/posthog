@@ -7368,6 +7368,9 @@
                 "compare": {
                     "type": "boolean"
                 },
+                "compareTo": {
+                    "type": "string"
+                },
                 "decimalPlaces": {
                     "type": "number"
                 },
@@ -7419,6 +7422,9 @@
                 },
                 "compare": {
                     "type": "boolean"
+                },
+                "compare_to": {
+                    "type": "string"
                 },
                 "decimal_places": {
                     "type": "number"
