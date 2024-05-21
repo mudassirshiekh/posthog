@@ -10,7 +10,7 @@ from posthog.utils import (
 
 
 class QueryCompareToDateRange(QueryDateRange):
-    """Translation of the raw `date_from` and `date_to` filter values to datetimes."""
+    """Moves the start of a date range back by the compare_to interval and sets the end to have the same delta as the original"""
 
     _team: Team
     _date_range: Optional[DateRange]
