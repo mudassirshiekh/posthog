@@ -682,7 +682,6 @@ class TrendsQueryRunner(QueryRunner):
                         aggregate_values=self._trends_display.is_total_value(),
                     )
                 )
-                print(self.query.trendsFilter.compareTo)
 
             series_with_extras = updated_series
 
