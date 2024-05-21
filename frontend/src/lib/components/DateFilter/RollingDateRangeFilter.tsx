@@ -62,7 +62,9 @@ export function RollingDateRangeFilter({
                 fullWidth={fullWidth}
             >
                 <p className="RollingDateRangeFilter__label">{dateRangeFilterLabel}</p>
-                {dateOption === 'period' ? null : (
+                {dateOption === 'period' ? (
+                    <div className="mr-1" />
+                ) : (
                     <div className="RollingDateRangeFilter__counter" onClick={(e): void => e.stopPropagation()}>
                         <span
                             className="RollingDateRangeFilter__counter__step"
@@ -109,7 +111,7 @@ export function RollingDateRangeFilter({
                     }}
                     size="xsmall"
                 />
-                <p className="RollingDateRangeFilter__label"> {dateRangeFilterSuffixLabel}</p>
+                <p className="RollingDateRangeFilter__label ml-1"> {dateRangeFilterSuffixLabel}</p>
             </LemonButton>
         </Tooltip>
     )

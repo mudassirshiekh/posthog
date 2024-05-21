@@ -20,11 +20,11 @@ export function CompareFilter(): JSX.Element | null {
     const label = (
         <span className="font-normal">
             <RollingDateRangeFilter
-                dateRangeFilterLabel="Compare to"
-                dateRangeFilterSuffixLabel="before"
+                dateRangeFilterLabel="Compare to "
+                dateRangeFilterSuffixLabel=" earlier"
                 allowPeriod={true}
                 onChange={(compareTo) => {
-                    updateInsightFilter({ compareTo })
+                    updateInsightFilter({ compare: true, compareTo })
                 }}
             />
         </span>
