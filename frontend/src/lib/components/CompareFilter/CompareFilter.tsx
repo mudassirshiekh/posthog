@@ -1,5 +1,6 @@
 import { LemonCheckbox } from '@posthog/lemon-ui'
 import { useActions, useValues } from 'kea'
+import { RollingDateRangeFilter } from 'lib/components/DateFilter/RollingDateRangeFilter'
 import { insightLogic } from 'scenes/insights/insightLogic'
 import { insightVizDataLogic } from 'scenes/insights/insightVizDataLogic'
 
@@ -16,13 +17,26 @@ export function CompareFilter(): JSX.Element | null {
         return null
     }
 
+    const label = (
+        <span className="font-normal">
+            Compare to{' '}
+            <RollingDateRangeFilter
+                dateRangeFilterLabel=""
+                dateRangeFilterSuffixLabel="before"
+                onChange={(compareTo) => {
+                    updateInsightFilter({ compareTo })
+                }}
+            />
+        </span>
+    )
+
     return (
         <LemonCheckbox
             onChange={(compare: boolean) => {
                 updateInsightFilter({ compare })
             }}
             checked={!!compare}
-            label={<span className="font-normal">Compare to previous period</span>}
+            label={label}
             bordered
             size="small"
         />

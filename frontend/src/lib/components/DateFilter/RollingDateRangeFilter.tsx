@@ -27,6 +27,7 @@ type RollingDateRangeFilterProps = {
         ref?: React.MutableRefObject<HTMLDivElement | null>
     }
     dateRangeFilterLabel?: string
+    dateRangeFilterSuffixLabel?: string
     allowedDateOptions?: DateOption[]
     fullWidth?: LemonButtonProps['fullWidth']
 }
@@ -39,6 +40,7 @@ export function RollingDateRangeFilter({
     selected,
     max,
     dateRangeFilterLabel = 'In the last',
+    dateRangeFilterSuffixLabel,
     pageKey,
     allowedDateOptions = ['days', 'weeks', 'months', 'years'],
     fullWidth,
@@ -100,6 +102,7 @@ export function RollingDateRangeFilter({
                     }}
                     size="xsmall"
                 />
+                <p className="RollingDateRangeFilter__label"> {dateRangeFilterSuffixLabel}</p>
             </LemonButton>
         </Tooltip>
     )

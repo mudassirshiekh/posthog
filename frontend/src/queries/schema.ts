@@ -649,6 +649,7 @@ export type TrendsFilterLegacy = Omit<
 export type TrendsFilter = {
     smoothingIntervals?: TrendsFilterLegacy['smoothing_intervals']
     compare?: TrendsFilterLegacy['compare']
+    compareTo?: TrendsFilterLegacy['compare_to']
     formula?: TrendsFilterLegacy['formula']
     display?: TrendsFilterLegacy['display']
     showLegend?: TrendsFilterLegacy['show_legend']
