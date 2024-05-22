@@ -13,6 +13,7 @@ from posthog.hogql.timings import HogQLTimings
 from posthog.hogql_queries.insights.trends.aggregation_operations import AggregationOperations
 from posthog.hogql_queries.insights.trends.breakdown import Breakdown
 from posthog.hogql_queries.insights.trends.display import TrendsDisplay
+from posthog.hogql_queries.utils.query_compare_to_date_range import QueryCompareToDateRange
 from posthog.hogql_queries.utils.query_date_range import QueryDateRange
 from posthog.hogql_queries.utils.query_previous_period_date_range import QueryPreviousPeriodDateRange
 from posthog.models import Action, Team
@@ -101,6 +102,18 @@ class TrendsActorsQueryBuilder:
         )
 
     @cached_property
+    def trends_compare_to_date_range(self) -> QueryCompareToDateRange:
+        if self.trends_query.trendsFilter is not None and isinstance(self.trends_query.trendsFilter.compareTo, str):
+            return QueryCompareToDateRange(
+                date_range=self.trends_query.dateRange,
+                team=self.team,
+                interval=self.trends_query.interval,
+                now=datetime.now(),
+                compare_to=self.trends_query.trendsFilter.compareTo,
+            )
+        return None
+
+    @cached_property
     def trends_display(self) -> TrendsDisplay:
         trends_filter = self.trends_query.trendsFilter or TrendsFilter()
         return TrendsDisplay(trends_filter.display)
@@ -119,6 +132,13 @@ class TrendsActorsQueryBuilder:
     def is_compare_previous(self) -> bool:
         return (
             bool(self.trends_query.trendsFilter and self.trends_query.trendsFilter.compare)
+            and self.compare_value == Compare.previous
+        )
+
+    @cached_property
+    def is_compare_to(self) -> bool:
+        return (
+            bool(self.trends_query.trendsFilter and self.trends_query.trendsFilter.compareTo)
             and self.compare_value == Compare.previous
         )
 
@@ -253,9 +273,14 @@ class TrendsActorsQueryBuilder:
 
     def _date_where_expr(self) -> list[ast.Expr]:
         # types
-        date_range: QueryDateRange = (
-            self.trends_previous_date_range if self.is_compare_previous else self.trends_date_range
-        )
+        if self.is_compare_previous:
+            if self.is_compare_to:
+                date_range = self.trends_compare_to_date_range
+            else:
+                date_range = self.trends_previous_date_range
+        else:
+            date_range = self.trends_date_range
+
         query_from, query_to = date_range.date_from(), date_range.date_to()
         actors_from: datetime
         actors_from_expr: ast.Expr
@@ -280,12 +305,15 @@ class TrendsActorsQueryBuilder:
 
             # use previous day/week/... for time_frame
             if self.is_compare_previous:
-                relative_delta = relativedelta(**date_range.date_from_delta_mappings())  # type: ignore
-                previous_time_frame = self.time_frame - relative_delta
-                if self.is_hourly:
-                    self.time_frame = previous_time_frame
+                if self.is_compare_to:
+                    self.time_frame = query_from + (self.time_frame - self.trends_date_range.date_from())
                 else:
-                    self.time_frame = previous_time_frame.replace(hour=0, minute=0, second=0, microsecond=0)
+                    relative_delta = relativedelta(**date_range.date_from_delta_mappings())  # type: ignore
+                    previous_time_frame = self.time_frame - relative_delta
+                    if self.is_hourly:
+                        self.time_frame = previous_time_frame
+                    else:
+                        self.time_frame = previous_time_frame.replace(hour=0, minute=0, second=0, microsecond=0)
 
             actors_from = self.time_frame
             actors_to = actors_from + date_range.interval_relativedelta()
