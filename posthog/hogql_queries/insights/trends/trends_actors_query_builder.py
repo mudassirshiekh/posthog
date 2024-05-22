@@ -102,7 +102,7 @@ class TrendsActorsQueryBuilder:
         )
 
     @cached_property
-    def trends_compare_to_date_range(self) -> QueryCompareToDateRange:
+    def trends_compare_to_date_range(self):
         if self.trends_query.trendsFilter is not None and isinstance(self.trends_query.trendsFilter.compareTo, str):
             return QueryCompareToDateRange(
                 date_range=self.trends_query.dateRange,
@@ -275,7 +275,7 @@ class TrendsActorsQueryBuilder:
         # types
         if self.is_compare_previous:
             if self.is_compare_to:
-                date_range = self.trends_compare_to_date_range
+                date_range: QueryDateRange = self.trends_compare_to_date_range
             else:
                 date_range = self.trends_previous_date_range
         else:
