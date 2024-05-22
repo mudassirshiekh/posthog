@@ -9,10 +9,9 @@ import {
     PERCENT_STACK_VIEW_DISPLAY_TYPE,
 } from 'lib/constants'
 import { dayjs } from 'lib/dayjs'
-import { featureFlagLogic } from 'lib/logic/featureFlagLogic'
 import { dateMapping, is12HoursOrLess, isLessThan2Days } from 'lib/utils'
 import posthog from 'posthog-js'
-import { dataWarehouseSceneLogic } from 'scenes/data-warehouse/external/dataWarehouseSceneLogic'
+import { databaseTableListLogic } from 'scenes/data-management/database/databaseTableListLogic'
 import { insightDataLogic, queryFromKind } from 'scenes/insights/insightDataLogic'
 import { keyForInsightLogicProps } from 'scenes/insights/sharedUtils'
 import { sceneLogic } from 'scenes/sceneLogic'
@@ -35,7 +34,7 @@ import {
 } from '~/queries/nodes/InsightViz/utils'
 import {
     BreakdownFilter,
-    DatabaseSchemaQueryResponseField,
+    DatabaseSchemaField,
     DataWarehouseNode,
     DateRange,
     FunnelExclusionSteps,
@@ -84,10 +83,8 @@ export const insightVizDataLogic = kea<insightVizDataLogicType>([
             ['isHogQLInsight', 'query', 'insightQuery', 'insightData', 'insightDataLoading', 'insightDataError'],
             filterTestAccountsDefaultsLogic,
             ['filterTestAccountsDefault'],
-            dataWarehouseSceneLogic,
-            ['externalTablesMap'],
-            featureFlagLogic,
-            ['featureFlags'],
+            databaseTableListLogic,
+            ['dataWarehouseTablesMap'],
         ],
         actions: [
             insightLogic,
@@ -239,14 +236,14 @@ export const insightVizDataLogic = kea<insightVizDataLogicType>([
         ],
 
         currentDataWarehouseSchemaColumns: [
-            (s) => [s.series, s.isSingleSeries, s.isDataWarehouseSeries, s.isBreakdownSeries, s.externalTablesMap],
+            (s) => [s.series, s.isSingleSeries, s.isDataWarehouseSeries, s.isBreakdownSeries, s.dataWarehouseTablesMap],
             (
                 series,
                 isSingleSeries,
                 isDataWarehouseSeries,
                 isBreakdownSeries,
-                externalTablesMap
-            ): DatabaseSchemaQueryResponseField[] => {
+                dataWarehouseTablesMap
+            ): DatabaseSchemaField[] => {
                 if (
                     !series ||
                     series.length === 0 ||
@@ -256,7 +253,7 @@ export const insightVizDataLogic = kea<insightVizDataLogicType>([
                     return []
                 }
 
-                return externalTablesMap[(series[0] as DataWarehouseNode)?.table_name]?.columns ?? []
+                return Object.values(dataWarehouseTablesMap[(series[0] as DataWarehouseNode)?.table_name]?.fields ?? {})
             },
         ],
 
