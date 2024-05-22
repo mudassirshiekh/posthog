@@ -517,6 +517,21 @@ class TestStickinessQueryRunner(APIBaseTest):
         assert response.results[1]["count"] == 0
         assert response.results[1]["compare_label"] == "previous"
 
+    def test_compare_to(self):
+        self._create_test_events()
+
+        response = self._run_query(
+            date_from="2020-01-12", date_to="2020-01-20", filters=StickinessFilter(compare=True, compareTo="-1d")
+        )
+
+        assert response.results[0]["count"] == 2
+        assert response.results[0]["compare_label"] == "current"
+        assert response.results[0]["data"] == [0, 0, 0, 1, 0, 0, 0, 1, 0]
+
+        assert response.results[1]["count"] == 2
+        assert response.results[1]["compare_label"] == "previous"
+        assert response.results[1]["data"] == [0, 0, 0, 0, 1, 0, 0, 0, 1]
+
     def test_filter_test_accounts(self):
         self._create_test_events()
 
