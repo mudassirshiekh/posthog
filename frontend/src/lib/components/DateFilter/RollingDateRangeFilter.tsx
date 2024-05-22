@@ -115,7 +115,9 @@ export function RollingDateRangeFilter({
                     }}
                     size="xsmall"
                 />
-                <p className="RollingDateRangeFilter__label ml-1"> {dateRangeFilterSuffixLabel}</p>
+                {dateRangeFilterSuffixLabel ? (
+                    <p className="RollingDateRangeFilter__label ml-1"> {dateRangeFilterSuffixLabel}</p>
+                ) : null}
             </LemonButton>
         </Tooltip>
     )

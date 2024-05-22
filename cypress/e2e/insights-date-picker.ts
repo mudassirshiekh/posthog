@@ -8,7 +8,7 @@ describe('insights date picker', () => {
     it('Can set the date filter and show the right grouping interval', () => {
         cy.get('[data-attr=date-filter]').click()
         cy.get('div').contains('Yesterday').should('exist').click()
-        cy.get('.Popover [data-attr=interval-filter] .LemonButton__content').should('contain', 'hour')
+        cy.get('[data-attr=interval-filter] .LemonButton__content').should('contain', 'hour')
     })
 
     it('Can set a custom rolling date range', () => {
