@@ -74,6 +74,7 @@ export function RollingDateRangeFilter({
                     </span>
                     <LemonInput
                         data-attr="rolling-date-range-input"
+                        className="[&>input::-webkit-inner-spin-button]:appearance-none"
                         type="number"
                         value={counter ?? 0}
                         min={0}
