@@ -65,13 +65,15 @@ export function RollingDateRangeFilter({
                 <div className="mr-1" />
             ) : (
                 <div className="RollingDateRangeFilter__counter" onClick={(e): void => e.stopPropagation()}>
-                    <span
-                        className="RollingDateRangeFilter__counter__step"
+                    <button
+                        className="RollingDateRangeFilter__counter__step cursor-pointer"
+                        // eslint-disable-next-line react/forbid-dom-props
+                        style={{ background: 'none' }}
                         onClick={decreaseCounter}
                         title="Decrease rolling date range"
                     >
                         -
-                    </span>
+                    </button>
                     <LemonInput
                         data-attr="rolling-date-range-input"
                         className="[&>input::-webkit-inner-spin-button]:appearance-none"
@@ -81,13 +83,15 @@ export function RollingDateRangeFilter({
                         placeholder="0"
                         onChange={(value) => setCounter(value)}
                     />
-                    <span
-                        className="RollingDateRangeFilter__counter__step"
+                    <button
+                        className="RollingDateRangeFilter__counter__step cursor-pointer"
+                        // eslint-disable-next-line react/forbid-dom-props
+                        style={{ background: 'none' }}
                         onClick={increaseCounter}
                         title="Increase rolling date range"
                     >
                         +
-                    </span>
+                    </button>
                 </div>
             )}
             <LemonSelect
