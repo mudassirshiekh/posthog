@@ -20,6 +20,7 @@ export function CompareFilter(): JSX.Element | null {
     const label = (
         <span className="font-normal">
             <RollingDateRangeFilter
+                isButton={false}
                 dateRangeFilterLabel="Compare to "
                 dateRangeFilterSuffixLabel=" earlier"
                 allowPeriod={true}
