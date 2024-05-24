@@ -174,35 +174,6 @@ CLICKHOUSE_TABLES = [
 ]
 
 
-@shared_task(ignore_result=True)
-def clickhouse_lag() -> None:
-    from statshog.defaults.django import statsd
-
-    from posthog.client import sync_execute
-
-    with pushed_metrics_registry("celery_clickhouse_lag") as registry:
-        lag_gauge = Gauge(
-            "posthog_celery_clickhouse_lag_seconds",
-            "Age of the latest ingested record per ClickHouse table.",
-            labelnames=["table_name"],
-            registry=registry,
-        )
-        for table in CLICKHOUSE_TABLES:
-            try:
-                QUERY = """SELECT max(_timestamp) observed_ts, now() now_ts, now() - max(_timestamp) as lag
-                    FROM {table}"""
-                query = QUERY.format(table=table)
-                lag = sync_execute(query)[0][2]
-                statsd.gauge(
-                    "posthog_celery_clickhouse__table_lag_seconds",
-                    lag,
-                    tags={"table": table},
-                )
-                lag_gauge.labels(table_name=table).set(lag)
-            except:
-                pass
-
-
 HEARTBEAT_EVENT_TO_INGESTION_LAG_METRIC = {
     "heartbeat": "ingestion",
     "heartbeat_buffer": "ingestion_buffer",
@@ -801,63 +772,3 @@ def calculate_replay_error_clusters() -> None:
         pass
     except Exception as e:
         logger.error("Failed to calculate replay error clusters", error=e, exc_info=True)
-
-
-@shared_task(ignore_result=True, max_retries=1)
-def poll_query_performance() -> None:
-    import math
-    import re
-    from posthog.utils import UUID_REGEX
-    from posthog import redis
-    from posthog.clickhouse.client import sync_execute
-    from posthog.clickhouse.client.execute_async import QueryStatusManager
-
-    CLICKHOUSE_SQL = """
-    SELECT
-        initial_query_id,
-        read_rows,
-        read_bytes,
-        total_rows_approx,
-        elapsed,
-        ProfileEvents['OSCPUVirtualTimeMicroseconds'] as OSCPUVirtualTimeMicroseconds
-    FROM clusterAllReplicas(posthog, system.processes)
-    WHERE is_initial_query
-    """
-    try:
-        redis_client = redis.get_client()
-
-        results, types = sync_execute(CLICKHOUSE_SQL, with_column_types=True)
-
-        noNaNInt = lambda num: 0 if math.isnan(num) else int(num)
-
-        all_query_progresses = {
-            result[0]: {
-                "bytes_read": noNaNInt(result[2]),
-                "rows_read": noNaNInt(result[1]),
-                "estimated_rows_total": noNaNInt(result[3]),
-                "time_elapsed": noNaNInt(result[4]),
-                "active_cpu_time": noNaNInt(result[5]),
-            }
-            for result in results
-        }
-        for initial_query_id, new_clickhouse_query_progress in all_query_progresses.items():
-            # extract uuid from initial_query_id
-            m = re.search(UUID_REGEX, initial_query_id, re.I)
-            if m is None:
-                continue
-            query_id = m.group(0)
-            keys = redis_client.keys(f"{QueryStatusManager.KEY_PREFIX_ASYNC_RESULTS}:{query_id}:*")
-            if len(keys) == 0:
-                continue
-            team_id = keys[0].decode("utf-8").split(":")[2]
-            manager = QueryStatusManager(query_id, team_id)
-
-            if len(keys) == 1:
-                clickhouse_query_progress_dict = {initial_query_id: new_clickhouse_query_progress}
-            else:
-                clickhouse_query_progress_dict = manager._get_clickhouse_query_status()
-                clickhouse_query_progress_dict[initial_query_id] = new_clickhouse_query_progress
-            manager.store_clickhouse_query_status(clickhouse_query_progress_dict)
-
-    except Exception as e:
-        logger.error("Clickhouse Status Check Failed", e)

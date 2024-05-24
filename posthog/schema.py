@@ -512,6 +512,11 @@ class PersonsArgMaxVersion(str, Enum):
     v2 = "v2"
 
 
+class PersonsJoinMode(str, Enum):
+    inner = "inner"
+    left = "left"
+
+
 class PersonsOnEventsMode(str, Enum):
     disabled = "disabled"
     person_id_no_override_properties_on_events = "person_id_no_override_properties_on_events"
@@ -528,6 +533,7 @@ class HogQLQueryModifiers(BaseModel):
     inCohortVia: Optional[InCohortVia] = None
     materializationMode: Optional[MaterializationMode] = None
     personsArgMaxVersion: Optional[PersonsArgMaxVersion] = None
+    personsJoinMode: Optional[PersonsJoinMode] = None
     personsOnEventsMode: Optional[PersonsOnEventsMode] = None
     s3TableUseInvalidColumns: Optional[bool] = None
 
@@ -1124,6 +1130,8 @@ class WebOverviewQueryResponse(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
+    dateFrom: Optional[str] = None
+    dateTo: Optional[str] = None
     error: Optional[str] = Field(
         default=None,
         description="Query error. Returned only if 'explain' or `modifiers.debug` is true. Throws an error otherwise.",
@@ -1496,6 +1504,8 @@ class CachedWebOverviewQueryResponse(BaseModel):
         extra="forbid",
     )
     cache_key: str
+    dateFrom: Optional[str] = None
+    dateTo: Optional[str] = None
     error: Optional[str] = Field(
         default=None,
         description="Query error. Returned only if 'explain' or `modifiers.debug` is true. Throws an error otherwise.",
@@ -1621,6 +1631,8 @@ class Response4(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
+    dateFrom: Optional[str] = None
+    dateTo: Optional[str] = None
     error: Optional[str] = Field(
         default=None,
         description="Query error. Returned only if 'explain' or `modifiers.debug` is true. Throws an error otherwise.",
@@ -1718,6 +1730,7 @@ class DatabaseSchemaField(BaseModel):
     )
     chain: Optional[list[Union[str, int]]] = None
     fields: Optional[list[str]] = None
+    hogql_value: str
     name: str
     schema_valid: bool
     table: Optional[str] = None
@@ -2119,6 +2132,8 @@ class QueryResponseAlternative9(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
+    dateFrom: Optional[str] = None
+    dateTo: Optional[str] = None
     error: Optional[str] = Field(
         default=None,
         description="Query error. Returned only if 'explain' or `modifiers.debug` is true. Throws an error otherwise.",
@@ -2257,6 +2272,8 @@ class QueryResponseAlternative16(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
+    dateFrom: Optional[str] = None
+    dateTo: Optional[str] = None
     error: Optional[str] = Field(
         default=None,
         description="Query error. Returned only if 'explain' or `modifiers.debug` is true. Throws an error otherwise.",
@@ -4128,9 +4145,11 @@ class ActorsQuery(BaseModel):
     model_config = ConfigDict(
         extra="forbid",
     )
-    fixedProperties: Optional[list[Union[PersonPropertyFilter, HogQLPropertyFilter]]] = Field(
+    fixedProperties: Optional[
+        list[Union[PersonPropertyFilter, CohortPropertyFilter, HogQLPropertyFilter, EmptyPropertyFilter]]
+    ] = Field(
         default=None,
-        description="Currently only person filters supported (including via HogQL), See `filter_conditions()` in actor_strategies.py.",
+        description="Currently only person filters supported. No filters for querying groups. See `filter_conditions()` in actor_strategies.py.",
     )
     kind: Literal["ActorsQuery"] = "ActorsQuery"
     limit: Optional[int] = None
@@ -4139,9 +4158,11 @@ class ActorsQuery(BaseModel):
     )
     offset: Optional[int] = None
     orderBy: Optional[list[str]] = None
-    properties: Optional[list[Union[PersonPropertyFilter, HogQLPropertyFilter]]] = Field(
+    properties: Optional[
+        list[Union[PersonPropertyFilter, CohortPropertyFilter, HogQLPropertyFilter, EmptyPropertyFilter]]
+    ] = Field(
         default=None,
-        description="Currently only person filters supported (including via HogQL). see `filter_conditions()` in actor_strategies.py.",
+        description="Currently only person filters supported. No filters for querying groups. See `filter_conditions()` in actor_strategies.py.",
     )
     response: Optional[ActorsQueryResponse] = None
     search: Optional[str] = None
