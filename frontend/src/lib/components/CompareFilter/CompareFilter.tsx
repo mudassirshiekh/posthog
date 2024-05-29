@@ -1,6 +1,7 @@
 import { LemonSelect } from '@posthog/lemon-ui'
 import { useActions, useValues } from 'kea'
 import { RollingDateRangeFilter } from 'lib/components/DateFilter/RollingDateRangeFilter'
+import { dateFromToText } from 'lib/utils'
 import { useState } from 'react'
 import { insightLogic } from 'scenes/insights/insightLogic'
 import { insightVizDataLogic } from 'scenes/insights/insightVizDataLogic'
@@ -66,6 +67,10 @@ export function CompareFilter(): JSX.Element | null {
 
     return (
         <LemonSelect
+            renderButtonContent={(leaf) =>
+                (leaf?.value == 'compareTo' ? `Compare to ${dateFromToText(compareToUi)} earlier` : leaf?.label) ||
+                'Compare to'
+            }
             value={value}
             dropdownMatchSelectWidth={false}
             onChange={(value) => {
