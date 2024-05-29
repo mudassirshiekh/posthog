@@ -41,11 +41,9 @@ class SeriesWithExtras:
         self,
         series: EventsNode | ActionsNode | DataWarehouseNode,
         is_previous_period_series: Optional[bool],
-        compare_to: Optional[str] = None,
     ):
         self.series = series
         self.is_previous_period_series = is_previous_period_series
-        self.compare_to = compare_to
 
 
 class StickinessQueryRunner(QueryRunner):
@@ -371,7 +369,6 @@ class StickinessQueryRunner(QueryRunner):
                     SeriesWithExtras(
                         series=series.series,
                         is_previous_period_series=True,
-                        compare_to=self.query.stickinessFilter.compareTo,
                     )
                 )
             series_with_extras = updated_series
@@ -380,10 +377,7 @@ class StickinessQueryRunner(QueryRunner):
 
     def date_range(self, series: SeriesWithExtras):
         if series.is_previous_period_series:
-            if not series.compare_to:
-                return self.query_previous_date_range
-            return self.query_compare_to_date_range
-
+            return self.query_previous_date_range
         return self.query_date_range
 
     @cached_property
@@ -397,15 +391,6 @@ class StickinessQueryRunner(QueryRunner):
 
     @cached_property
     def query_previous_date_range(self):
-        return QueryPreviousPeriodDateRange(
-            date_range=self.query.dateRange,
-            team=self.team,
-            interval=self.query.interval,
-            now=datetime.now(),
-        )
-
-    @cached_property
-    def query_compare_to_date_range(self):
         if self.query.stickinessFilter is not None and isinstance(self.query.stickinessFilter.compareTo, str):
             return QueryCompareToDateRange(
                 date_range=self.query.dateRange,
@@ -414,4 +399,9 @@ class StickinessQueryRunner(QueryRunner):
                 now=datetime.now(),
                 compare_to=self.query.stickinessFilter.compareTo,
             )
-        return None
+        return QueryPreviousPeriodDateRange(
+            date_range=self.query.dateRange,
+            team=self.team,
+            interval=self.query.interval,
+            now=datetime.now(),
+        )
