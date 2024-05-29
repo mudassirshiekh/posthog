@@ -31,7 +31,7 @@ export function ActionsLineGraph({
         labelGroupType,
         incompletenessOffsetFromEnd,
         formula,
-        compare,
+        compareFilter,
         display,
         interval,
         showValuesOnSeries,
@@ -106,7 +106,7 @@ export function ActionsLineGraph({
                       }
                     : undefined
             }
-            compare={compare}
+            compare={!!compareFilter?.compare}
             isInProgress={!isStickiness && incompletenessOffsetFromEnd < 0}
             isArea={display === ChartDisplayType.ActionsAreaGraph}
             incompletenessOffsetFromEnd={incompletenessOffsetFromEnd}

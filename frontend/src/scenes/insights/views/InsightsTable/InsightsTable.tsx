@@ -55,7 +55,7 @@ export function InsightsTable({
         insightDataLoading,
         indexedResults,
         isNonTimeSeriesDisplay,
-        compare,
+        compareFilter,
         isTrends,
         display,
         interval,
@@ -104,7 +104,7 @@ export function InsightsTable({
                     item={item}
                     indexedResults={indexedResults}
                     canEditSeriesNameInline={canEditSeriesNameInline}
-                    compare={compare}
+                    compare={!!compareFilter?.compare}
                     handleEditClick={handleSeriesEditClick}
                     hasMultipleSeries={!isSingleSeries}
                 />
@@ -206,7 +206,7 @@ export function InsightsTable({
                     <ValueColumnTitle
                         index={index}
                         indexedResults={indexedResults}
-                        compare={compare}
+                        compare={!!compareFilter?.compare}
                         interval={interval}
                     />
                 ),
@@ -235,7 +235,7 @@ export function InsightsTable({
             emptyState="No insight results"
             data-attr="insights-table-graph"
             useURLForSorting={insightMode !== ItemMode.Edit}
-            rowRibbonColor={isLegend ? (item) => getSeriesColor(item.seriesIndex, compare || false) : undefined}
+            rowRibbonColor={isLegend ? (item) => getSeriesColor(item.seriesIndex, !!compareFilter?.compare) : undefined}
             firstColumnSticky
             maxHeaderWidth="20rem"
         />
