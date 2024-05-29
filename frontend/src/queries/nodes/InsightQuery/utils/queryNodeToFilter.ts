@@ -4,6 +4,7 @@ import { isFunnelsFilter, isLifecycleFilter, isStickinessFilter, isTrendsFilter 
 import {
     ActionsNode,
     BreakdownFilter,
+    CompareFilter,
     DataWarehouseNode,
     EventsNode,
     FunnelsFilterLegacy,
@@ -149,6 +150,10 @@ export const queryNodeToFilter = (query: InsightQueryNode): Partial<FilterType> 
         Object.assign(filters, objectClean<Partial<Record<keyof BreakdownFilter, unknown>>>(query.breakdownFilter))
     }
 
+    if ((isTrendsQuery(query) || isStickinessQuery(query)) && query.compareFilter) {
+        Object.assign(filters, objectClean<Partial<Record<keyof CompareFilter, unknown>>>(query.compareFilter))
+    }
+
     if (!isStickinessQuery(query)) {
         Object.assign(
             filters,
@@ -200,7 +205,6 @@ export const queryNodeToFilter = (query: InsightQueryNode): Partial<FilterType> 
         camelCasedTrendsProps.show_percent_stack_view = queryCopy.trendsFilter?.showPercentStackView
         camelCasedTrendsProps.show_legend = queryCopy.trendsFilter?.showLegend
         camelCasedTrendsProps.show_values_on_series = queryCopy.trendsFilter?.showValuesOnSeries
-        camelCasedTrendsProps.compare_to = queryCopy.trendsFilter?.compareTo
         delete queryCopy.trendsFilter?.smoothingIntervals
         delete queryCopy.trendsFilter?.decimalPlaces
         delete queryCopy.trendsFilter?.aggregationAxisFormat
@@ -210,7 +214,6 @@ export const queryNodeToFilter = (query: InsightQueryNode): Partial<FilterType> 
         delete queryCopy.trendsFilter?.showPercentStackView
         delete queryCopy.trendsFilter?.showLegend
         delete queryCopy.trendsFilter?.showValuesOnSeries
-        delete queryCopy.trendsFilter?.compareTo
     } else if (isFunnelsQuery(queryCopy)) {
         camelCasedFunnelsProps.exclusions = queryCopy.funnelsFilter?.exclusions
             ? queryCopy.funnelsFilter.exclusions.map(({ funnelFromStep, funnelToStep, ...rest }, index) => ({
@@ -295,10 +298,8 @@ export const queryNodeToFilter = (query: InsightQueryNode): Partial<FilterType> 
     } else if (isStickinessQuery(queryCopy)) {
         camelCasedStickinessProps.show_legend = queryCopy.stickinessFilter?.showLegend
         camelCasedStickinessProps.show_values_on_series = queryCopy.stickinessFilter?.showValuesOnSeries
-        camelCasedStickinessProps.compare_to = queryCopy.stickinessFilter?.compareTo
         delete queryCopy.stickinessFilter?.showLegend
         delete queryCopy.stickinessFilter?.showValuesOnSeries
-        delete queryCopy.stickinessFilter?.compareTo
     } else if (isLifecycleQuery(queryCopy)) {
         camelCasedLifecycleProps.show_values_on_series = queryCopy.lifecycleFilter?.showValuesOnSeries
         camelCasedLifecycleProps.show_legend = queryCopy.lifecycleFilter?.showLegend

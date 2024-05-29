@@ -7308,7 +7308,7 @@
                 "compare": {
                     "type": "boolean"
                 },
-                "compareTo": {
+                "compare_to": {
                     "type": "string"
                 },
                 "display": {
@@ -7685,7 +7685,7 @@
                 "compare": {
                     "type": "boolean"
                 },
-                "compareTo": {
+                "compare_to": {
                     "type": "string"
                 },
                 "decimalPlaces": {

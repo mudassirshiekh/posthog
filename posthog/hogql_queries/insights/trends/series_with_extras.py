@@ -6,7 +6,6 @@ class SeriesWithExtras:
     series: Union[EventsNode, ActionsNode, DataWarehouseNode]
     series_order: int
     is_previous_period_series: Optional[bool]
-    compare_to: Optional[str]
     overriden_query: Optional[TrendsQuery]
     aggregate_values: Optional[bool]
 

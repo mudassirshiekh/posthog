@@ -73,8 +73,6 @@ describe('queryNodeToFilter', () => {
             },
             trendsFilter: {
                 smoothingIntervals: 3,
-                compare: true,
-                compareTo: '-4d',
                 formula: 'A + B',
                 display: ChartDisplayType.ActionsBar,
                 // breakdown_histogram_bin_count?: TrendsFilterLegacy['breakdown_histogram_bin_count']
@@ -87,6 +85,10 @@ describe('queryNodeToFilter', () => {
                 showLabelsOnSeries: true,
                 showPercentStackView: true,
                 // hidden_legend_indexes?: TrendsFilterLegacy['hidden_legend_indexes']
+            },
+            compareFilter: {
+                compare: true,
+                compare_to: '-4d',
             },
         }
 

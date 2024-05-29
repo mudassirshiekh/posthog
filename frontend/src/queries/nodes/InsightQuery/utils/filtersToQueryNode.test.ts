@@ -390,8 +390,6 @@ describe('filtersToQueryNode', () => {
                     smoothingIntervals: 1,
                     showLegend: true,
                     hidden_legend_indexes: [0, 10],
-                    compare: true,
-                    compareTo: '-4d',
                     aggregationAxisFormat: 'numeric',
                     aggregationAxisPrefix: '£',
                     aggregationAxisPostfix: '%',
@@ -402,6 +400,10 @@ describe('filtersToQueryNode', () => {
                 },
                 breakdownFilter: {
                     breakdown_histogram_bin_count: 1,
+                },
+                compareFilter: {
+                    compare: true,
+                    compare_to: '-4d',
                 },
                 series: [],
             }
@@ -624,11 +626,13 @@ describe('filtersToQueryNode', () => {
             const query: StickinessQuery = {
                 kind: NodeKind.StickinessQuery,
                 stickinessFilter: {
-                    compare: true,
-                    compareTo: '-4d',
                     showLegend: true,
                     hidden_legend_indexes: [0, 10],
                     display: ChartDisplayType.ActionsLineGraph,
+                },
+                compareFilter: {
+                    compare: true,
+                    compare_to: '-4d',
                 },
                 series: [],
             }
@@ -972,8 +976,10 @@ describe('filtersToQueryNode', () => {
                 },
                 filterTestAccounts: true,
                 trendsFilter: {
-                    compare: true,
                     display: ChartDisplayType.BoldNumber,
+                },
+                compareFilter: {
+                    compare: true,
                 },
             }
             expect(result).toEqual(query)

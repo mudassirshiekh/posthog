@@ -924,7 +924,7 @@ class StickinessFilter(BaseModel):
         extra="forbid",
     )
     compare: Optional[bool] = None
-    compareTo: Optional[str] = None
+    compare_to: Optional[str] = None
     display: Optional[ChartDisplayType] = None
     hidden_legend_indexes: Optional[list[float]] = None
     showLegend: Optional[bool] = None
@@ -1052,7 +1052,7 @@ class TrendsFilter(BaseModel):
     aggregationAxisPrefix: Optional[str] = None
     breakdown_histogram_bin_count: Optional[float] = None
     compare: Optional[bool] = None
-    compareTo: Optional[str] = None
+    compare_to: Optional[str] = None
     decimalPlaces: Optional[float] = None
     display: Optional[ChartDisplayType] = None
     formula: Optional[str] = None

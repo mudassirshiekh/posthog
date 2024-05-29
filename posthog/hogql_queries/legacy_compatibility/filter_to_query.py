@@ -320,8 +320,6 @@ def _insight_filter(filter: dict):
                 smoothingIntervals=filter.get("smoothing_intervals"),
                 showLegend=filter.get("show_legend"),
                 # hidden_legend_indexes=cleanHiddenLegendIndexes(filter.get('hidden_legend_keys')),
-                compare=filter.get("compare"),
-                compareTo=filter.get("compare_to"),
                 aggregationAxisFormat=filter.get("aggregation_axis_format"),
                 aggregationAxisPrefix=filter.get("aggregation_axis_prefix"),
                 aggregationAxisPostfix=filter.get("aggregation_axis_postfix"),
@@ -407,7 +405,6 @@ def _insight_filter(filter: dict):
     elif _insight_type(filter) == "STICKINESS":
         insight_filter = {
             "stickinessFilter": StickinessFilter(
-                compare=filter.get("compare"),
                 showLegend=filter.get("show_legend"),
                 # hidden_legend_indexes: cleanHiddenLegendIndexes(filter.get('hidden_legend_keys')),
                 showValuesOnSeries=filter.get("show_values_on_series"),
@@ -458,6 +455,7 @@ def filter_to_query(filter: dict) -> InsightQueryNode:
         **_filter_test_accounts(filter),
         **_properties(filter),
         **_breakdown_filter(filter),
+        **_compare_filter(filter),
         **_group_aggregation_filter(filter),
         **_insight_filter(filter),
     }

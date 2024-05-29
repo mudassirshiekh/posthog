@@ -665,8 +665,6 @@ export type TrendsFilterLegacy = Omit<
 
 export type TrendsFilter = {
     smoothingIntervals?: TrendsFilterLegacy['smoothing_intervals']
-    compare?: TrendsFilterLegacy['compare']
-    compareTo?: TrendsFilterLegacy['compare_to']
     formula?: TrendsFilterLegacy['formula']
     display?: TrendsFilterLegacy['display']
     showLegend?: TrendsFilterLegacy['show_legend']
@@ -679,6 +677,8 @@ export type TrendsFilter = {
     showLabelsOnSeries?: TrendsFilterLegacy['show_labels_on_series']
     showPercentStackView?: TrendsFilterLegacy['show_percent_stack_view']
     hidden_legend_indexes?: TrendsFilterLegacy['hidden_legend_indexes']
+    compare?: TrendsFilterLegacy['compare']
+    compare_to?: TrendsFilterLegacy['compare_to']
 }
 
 export interface TrendsQueryResponse extends AnalyticsQueryResponseBase<Record<string, any>[]> {}
@@ -852,12 +852,12 @@ export type StickinessFilterLegacy = Omit<
 >
 
 export type StickinessFilter = {
-    compare?: StickinessFilterLegacy['compare']
-    compareTo?: StickinessFilterLegacy['compare_to']
     display?: StickinessFilterLegacy['display']
     showLegend?: StickinessFilterLegacy['show_legend']
     showValuesOnSeries?: StickinessFilterLegacy['show_values_on_series']
     hidden_legend_indexes?: StickinessFilterLegacy['hidden_legend_indexes']
+    compare?: TrendsFilterLegacy['compare']
+    compare_to?: TrendsFilterLegacy['compare_to']
 }
 
 export interface StickinessQueryResponse extends AnalyticsQueryResponseBase<Record<string, any>[]> {}

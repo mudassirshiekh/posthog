@@ -17,7 +17,7 @@ export interface InsightLegendProps {
 export function InsightLegend({ horizontal, inCardView, readOnly = false }: InsightLegendProps): JSX.Element | null {
     const { insightProps, highlightedSeries, hiddenLegendKeys } = useValues(insightLogic)
     const { toggleVisibility } = useActions(insightLogic)
-    const { indexedResults, compare, display, trendsFilter, hasLegend, isSingleSeries } = useValues(
+    const { indexedResults, compareFilter, display, trendsFilter, hasLegend, isSingleSeries } = useValues(
         trendsDataLogic(insightProps)
     )
 
@@ -40,7 +40,7 @@ export function InsightLegend({ horizontal, inCardView, readOnly = false }: Insi
                             hasMultipleSeries={!isSingleSeries}
                             highlighted={shouldHighlightThisRow(hiddenLegendKeys, index, highlightedSeries)}
                             toggleVisibility={toggleVisibility}
-                            compare={compare}
+                            compare={!!compareFilter?.compare}
                             display={display}
                             trendsFilter={trendsFilter}
                         />
