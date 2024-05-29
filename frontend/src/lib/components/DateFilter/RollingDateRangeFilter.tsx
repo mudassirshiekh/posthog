@@ -19,9 +19,9 @@ const dateOptions: LemonSelectOptionLeaf<DateOption>[] = [
 type RollingDateRangeFilterProps = {
     isButton?: boolean
     pageKey?: string
-    // specifies if the filter is selected in the dropdown (to darken)
+    /** specifies if the filter is selected in the dropdown (to darken) */
     selected?: boolean
-    // specifies if the filter is in use (causes it to read props)
+    /** specifies if the filter is in use (causes it to read props) */
     inUse?: boolean
     dateFrom?: string | null | dayjs.Dayjs
     max?: number | null

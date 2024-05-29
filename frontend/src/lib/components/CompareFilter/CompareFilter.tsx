@@ -2,7 +2,7 @@ import { LemonSelect } from '@posthog/lemon-ui'
 import { useActions, useValues } from 'kea'
 import { RollingDateRangeFilter } from 'lib/components/DateFilter/RollingDateRangeFilter'
 import { dateFromToText } from 'lib/utils'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { insightLogic } from 'scenes/insights/insightLogic'
 import { insightVizDataLogic } from 'scenes/insights/insightVizDataLogic'
 
@@ -14,7 +14,7 @@ export function CompareFilter(): JSX.Element | null {
 
     // This keeps the state of the rolling date range filter, even when different drop down options are selected
     // The default value for this is one month
-    const [compareToUi, setCompareToUi] = useState<string>(compareTo || '-1m')
+    const [tentativeCompareTo, setTentativeCompareTo] = useState<string>(compareTo || '-1m')
 
     const disabled: boolean = !canEditInsight || !supportsCompare
 
@@ -23,9 +23,11 @@ export function CompareFilter(): JSX.Element | null {
         return null
     }
 
-    if (!!compareTo && compareToUi != compareTo) {
-        setCompareToUi(compareTo)
-    }
+    useEffect(() => {
+        if (!!compareTo && tentativeCompareTo != compareTo) {
+            setTentativeCompareTo(compareTo)
+        }
+    }, [compareTo])
 
     const options = [
         {
@@ -39,19 +41,17 @@ export function CompareFilter(): JSX.Element | null {
         {
             value: 'compareTo',
             label: (
-                <div onClick={() => updateInsightFilter({ compare: true, compareTo: compareToUi })}>
-                    <RollingDateRangeFilter
-                        isButton={false}
-                        dateRangeFilterLabel="Compare to "
-                        dateRangeFilterSuffixLabel=" earlier"
-                        dateFrom={compareToUi}
-                        selected={!!compare && !!compareTo}
-                        inUse={true}
-                        onChange={(compareTo) => {
-                            updateInsightFilter({ compare: true, compareTo })
-                        }}
-                    />
-                </div>
+                <RollingDateRangeFilter
+                    isButton={false}
+                    dateRangeFilterLabel="Compare to "
+                    dateRangeFilterSuffixLabel=" earlier"
+                    dateFrom={tentativeCompareTo}
+                    selected={!!compare && !!compareTo}
+                    inUse={true}
+                    onChange={(compareTo) => {
+                        updateInsightFilter({ compare: true, compareTo })
+                    }}
+                />
             ),
         },
     ]
@@ -67,9 +67,15 @@ export function CompareFilter(): JSX.Element | null {
 
     return (
         <LemonSelect
+            onSelect={(newValue) => {
+                if (newValue == 'compareTo') {
+                    updateInsightFilter({ compare: true, compareTo: tentativeCompareTo })
+                }
+            }}
             renderButtonContent={(leaf) =>
-                (leaf?.value == 'compareTo' ? `Compare to ${dateFromToText(compareToUi)} earlier` : leaf?.label) ||
-                'Compare to'
+                (leaf?.value == 'compareTo'
+                    ? `Compare to ${dateFromToText(tentativeCompareTo)} earlier`
+                    : leaf?.label) || 'Compare to'
             }
             value={value}
             dropdownMatchSelectWidth={false}
@@ -85,33 +91,4 @@ export function CompareFilter(): JSX.Element | null {
             size="small"
         />
     )
-
-    /*
-    const label = (
-        <span className="font-normal">
-            <RollingDateRangeFilter
-                isButton={false}
-                dateRangeFilterLabel="Compare to "
-                dateRangeFilterSuffixLabel=" earlier"
-                allowPeriod={true}
-                dateFrom={compareTo}
-                inUse={true}
-                onChange={(compareTo) => {
-                    updateInsightFilter({ compare: true, compareTo })
-                }}
-            />
-        </span>
-    )
-
-    return (
-        <LemonCheckbox
-            onChange={(compare: boolean) => {
-                updateInsightFilter({ compare })
-            }}
-            checked={!!compare}
-            label={label}
-            bordered
-            size="small"
-        />
-    )*/
 }
