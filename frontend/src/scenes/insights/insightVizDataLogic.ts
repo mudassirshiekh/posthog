@@ -22,6 +22,7 @@ import { queryNodeToFilter, seriesNodeToFilter } from '~/queries/nodes/InsightQu
 import {
     getBreakdown,
     getCompare,
+    getCompareFilter,
     getCompareTo,
     getDisplay,
     getFormula,
@@ -34,6 +35,7 @@ import {
 } from '~/queries/nodes/InsightViz/utils'
 import {
     BreakdownFilter,
+    CompareFilter,
     DatabaseSchemaField,
     DataWarehouseNode,
     DateRange,
@@ -100,6 +102,7 @@ export const insightVizDataLogic = kea<insightVizDataLogicType>([
         updateInsightFilter: (insightFilter: InsightFilter) => ({ insightFilter }),
         updateDateRange: (dateRange: DateRange) => ({ dateRange }),
         updateBreakdownFilter: (breakdownFilter: BreakdownFilter) => ({ breakdownFilter }),
+        updateCompareFilter: (compareFilter: CompareFilter) => ({ compareFilter }),
         updateDisplay: (display: ChartDisplayType | undefined) => ({ display }),
         setTimedOutQueryId: (id: string | null) => ({ id }),
     }),
@@ -159,6 +162,7 @@ export const insightVizDataLogic = kea<insightVizDataLogicType>([
 
         dateRange: [(s) => [s.querySource], (q) => (q ? q.dateRange : null)],
         breakdownFilter: [(s) => [s.querySource], (q) => (q ? getBreakdown(q) : null)],
+        compareFilter: [(s) => [s.querySource], (q) => (q ? getCompareFilter(q) : null)],
         display: [(s) => [s.querySource], (q) => (q ? getDisplay(q) : null)],
         compare: [(s) => [s.querySource], (q) => (q ? getCompare(q) : null)],
         compareTo: [(s) => [s.querySource], (q) => (q ? getCompareTo(q) : null)],
@@ -378,6 +382,12 @@ export const insightVizDataLogic = kea<insightVizDataLogicType>([
             await breakpoint(500) // extra debounce time because of number input
             actions.updateQuerySource({
                 breakdownFilter: { ...values.breakdownFilter, ...breakdownFilter },
+            } as Partial<TrendsQuery>)
+        },
+        updateCompareFilter: async ({ compareFilter }, breakpoint) => {
+            await breakpoint(500) // extra debounce time because of number input
+            actions.updateQuerySource({
+                compareFilter: { ...values.compareFilter, ...compareFilter },
             } as Partial<TrendsQuery>)
         },
         updateInsightFilter: async ({ insightFilter }, breakpoint) => {

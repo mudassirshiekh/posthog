@@ -694,6 +694,8 @@ export interface TrendsQuery extends InsightsQueryBase<TrendsQueryResponse> {
     trendsFilter?: TrendsFilter
     /** Breakdown of the events and actions */
     breakdownFilter?: BreakdownFilter
+    /** Compare to date range */
+    compareFilter?: CompareFilter
 }
 
 /** `FunnelsFilterType` minus everything inherited from `FilterType` and persons modal related params
@@ -870,6 +872,8 @@ export interface StickinessQuery
     series: AnyEntityNode[]
     /** Properties specific to the stickiness insight */
     stickinessFilter?: StickinessFilter
+    /** Compare to date range */
+    compareFilter?: CompareFilter
 }
 
 /** `LifecycleFilterType` minus everything inherited from `FilterType` */
@@ -1444,6 +1448,11 @@ export interface BreakdownFilter {
     breakdown_group_type_index?: integer | null
     breakdown_histogram_bin_count?: integer // trends breakdown histogram bin
     breakdown_hide_other_aggregation?: boolean | null // hides the "other" field for trends
+}
+
+export interface CompareFilter {
+    compare?: boolean
+    compare_to?: string
 }
 
 // TODO: Rename to `DashboardFilters` for consistency with `HogQLFilters`

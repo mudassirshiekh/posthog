@@ -17,11 +17,9 @@ class SeriesWithExtras:
         is_previous_period_series: Optional[bool],
         overriden_query: Optional[TrendsQuery],
         aggregate_values: Optional[bool],
-        compare_to: Optional[str] = None,
     ):
         self.series = series
         self.series_order = series_order
         self.is_previous_period_series = is_previous_period_series
-        self.compare_to = compare_to
         self.overriden_query = overriden_query
         self.aggregate_values = aggregate_values

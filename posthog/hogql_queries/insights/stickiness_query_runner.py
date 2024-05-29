@@ -243,7 +243,7 @@ class StickinessQueryRunner(QueryRunner):
                 }
 
                 # Modifications for when comparing to previous period
-                if self.query.stickinessFilter is not None and self.query.stickinessFilter.compare:
+                if self.query.compareFilter is not None and self.query.compareFilter.compare:
                     series_object["compare"] = True
                     series_object["compare_label"] = (
                         "previous" if series_with_extra.is_previous_period_series else "current"
@@ -356,7 +356,7 @@ class StickinessQueryRunner(QueryRunner):
             for series in self.query.series
         ]
 
-        if self.query.stickinessFilter is not None and self.query.stickinessFilter.compare:
+        if self.query.compareFilter is not None and self.query.compareFilter.compare:
             updated_series = []
             for series in series_with_extras:
                 updated_series.append(
@@ -391,13 +391,13 @@ class StickinessQueryRunner(QueryRunner):
 
     @cached_property
     def query_previous_date_range(self):
-        if self.query.stickinessFilter is not None and isinstance(self.query.stickinessFilter.compareTo, str):
+        if self.query.compareFilter is not None and isinstance(self.query.compareFilter.compare_to, str):
             return QueryCompareToDateRange(
                 date_range=self.query.dateRange,
                 team=self.team,
                 interval=self.query.interval,
                 now=datetime.now(),
-                compare_to=self.query.stickinessFilter.compareTo,
+                compare_to=self.query.compareFilter.compare_to,
             )
         return QueryPreviousPeriodDateRange(
             date_range=self.query.dateRange,

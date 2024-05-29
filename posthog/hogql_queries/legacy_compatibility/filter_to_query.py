@@ -28,6 +28,7 @@ from posthog.schema import (
     TrendsFilter,
     TrendsQuery,
     FunnelVizType,
+    CompareFilter,
 )
 from posthog.types import InsightQueryNode
 from posthog.utils import str_to_bool
@@ -289,6 +290,21 @@ def _breakdown_filter(_filter: dict):
         return {}
 
     return {"breakdownFilter": BreakdownFilter(**breakdownFilter)}
+
+
+def _compare_filter(_filter: dict):
+    if _insight_type(_filter) != "TRENDS" and _insight_type(_filter) != "STICKINESS":
+        return {}
+
+    compareFilter = {
+        "compare": _filter.get("compare"),
+        "compare_to": _filter.get("compare_to"),
+    }
+
+    if len(CompareFilter(**compareFilter).model_dump(exclude_defaults=True)) == 0:
+        return {}
+
+    return {"compareFilter": CompareFilter(**compareFilter)}
 
 
 def _group_aggregation_filter(filter: dict):

@@ -9,12 +9,12 @@ import { insightVizDataLogic } from 'scenes/insights/insightVizDataLogic'
 export function CompareFilter(): JSX.Element | null {
     const { insightProps, canEditInsight } = useValues(insightLogic)
 
-    const { compare, supportsCompare, compareTo } = useValues(insightVizDataLogic(insightProps))
-    const { updateInsightFilter } = useActions(insightVizDataLogic(insightProps))
+    const { compareFilter, supportsCompare } = useValues(insightVizDataLogic(insightProps))
+    const { updateCompareFilter } = useActions(insightVizDataLogic(insightProps))
 
     // This keeps the state of the rolling date range filter, even when different drop down options are selected
     // The default value for this is one month
-    const [tentativeCompareTo, setTentativeCompareTo] = useState<string>(compareTo || '-1m')
+    const [tentativeCompareTo, setTentativeCompareTo] = useState<string>(compareFilter?.compare_to || '-1m')
 
     const disabled: boolean = !canEditInsight || !supportsCompare
 
@@ -24,10 +24,11 @@ export function CompareFilter(): JSX.Element | null {
     }
 
     useEffect(() => {
-        if (!!compareTo && tentativeCompareTo != compareTo) {
-            setTentativeCompareTo(compareTo)
+        const newCompareTo = compareFilter?.compare_to
+        if (!!newCompareTo && tentativeCompareTo != newCompareTo) {
+            setTentativeCompareTo(newCompareTo)
         }
-    }, [compareTo])
+    }, [compareFilter?.compare_to])
 
     const options = [
         {
@@ -46,10 +47,10 @@ export function CompareFilter(): JSX.Element | null {
                     dateRangeFilterLabel="Compare to "
                     dateRangeFilterSuffixLabel=" earlier"
                     dateFrom={tentativeCompareTo}
-                    selected={!!compare && !!compareTo}
+                    selected={!!compareFilter?.compare && !!compareFilter?.compare_to}
                     inUse={true}
-                    onChange={(compareTo) => {
-                        updateInsightFilter({ compare: true, compareTo })
+                    onChange={(compare_to) => {
+                        updateCompareFilter({ compare: true, compare_to })
                     }}
                 />
             ),
@@ -57,8 +58,8 @@ export function CompareFilter(): JSX.Element | null {
     ]
 
     let value = 'none'
-    if (compare) {
-        if (compareTo) {
+    if (compareFilter?.compare) {
+        if (compareFilter?.compare_to) {
             value = 'compareTo'
         } else {
             value = 'previous'
@@ -69,7 +70,7 @@ export function CompareFilter(): JSX.Element | null {
         <LemonSelect
             onSelect={(newValue) => {
                 if (newValue == 'compareTo') {
-                    updateInsightFilter({ compare: true, compareTo: tentativeCompareTo })
+                    updateCompareFilter({ compare: true, compare_to: tentativeCompareTo })
                 }
             }}
             renderButtonContent={(leaf) =>
@@ -81,9 +82,9 @@ export function CompareFilter(): JSX.Element | null {
             dropdownMatchSelectWidth={false}
             onChange={(value) => {
                 if (value == 'none') {
-                    updateInsightFilter({ compare: false, compareTo: undefined })
+                    updateCompareFilter({ compare: false, compare_to: undefined })
                 } else if (value == 'previous') {
-                    updateInsightFilter({ compare: true, compareTo: undefined })
+                    updateCompareFilter({ compare: true, compare_to: undefined })
                 }
             }}
             data-attr="compare-filter"
