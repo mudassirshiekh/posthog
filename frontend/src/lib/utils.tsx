@@ -839,12 +839,12 @@ const dateOptionsMap = {
 export function dateFilterToText(
     dateFrom: string | dayjs.Dayjs | null | undefined,
     dateTo: string | dayjs.Dayjs | null | undefined,
-    defaultValue: string,
+    defaultValue: string | null,
     dateOptions: DateMappingOption[] = dateMapping,
     isDateFormatted: boolean = false,
     dateFormat: string = DATE_FORMAT,
     startOfRange: boolean = false
-): string {
+): string | null {
     if (dayjs.isDayjs(dateFrom) && dayjs.isDayjs(dateTo)) {
         return formatDateRange(dateFrom, dateTo, dateFormat)
     }
