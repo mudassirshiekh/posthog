@@ -372,7 +372,13 @@ export const insightVizDataLogic = kea<insightVizDataLogicType>([
     listeners(({ actions, values, props }) => ({
         updateDateRange: async ({ dateRange }, breakpoint) => {
             await breakpoint(300)
-            actions.updateQuerySource({ dateRange: { ...values.dateRange, ...dateRange } })
+            actions.updateQuerySource({
+                dateRange: {
+                    ...values.dateRange,
+                    ...dateRange,
+                },
+                ...(dateRange.date_from == 'all' ? ({ compareFilter: undefined } as Partial<TrendsQuery>) : {}),
+            })
         },
         updateBreakdownFilter: async ({ breakdownFilter }, breakpoint) => {
             await breakpoint(500) // extra debounce time because of number input

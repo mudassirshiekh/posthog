@@ -1051,8 +1051,6 @@ class TrendsFilter(BaseModel):
     aggregationAxisPostfix: Optional[str] = None
     aggregationAxisPrefix: Optional[str] = None
     breakdown_histogram_bin_count: Optional[float] = None
-    compare: Optional[bool] = None
-    compare_to: Optional[str] = None
     decimalPlaces: Optional[float] = None
     display: Optional[ChartDisplayType] = None
     formula: Optional[str] = None

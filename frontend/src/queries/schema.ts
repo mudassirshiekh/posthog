@@ -677,8 +677,8 @@ export type TrendsFilter = {
     showLabelsOnSeries?: TrendsFilterLegacy['show_labels_on_series']
     showPercentStackView?: TrendsFilterLegacy['show_percent_stack_view']
     hidden_legend_indexes?: TrendsFilterLegacy['hidden_legend_indexes']
-    compare?: TrendsFilterLegacy['compare']
-    compare_to?: TrendsFilterLegacy['compare_to']
+    //compare?: TrendsFilterLegacy['compare']
+    //compare_to?: TrendsFilterLegacy['compare_to']
 }
 
 export interface TrendsQueryResponse extends AnalyticsQueryResponseBase<Record<string, any>[]> {}

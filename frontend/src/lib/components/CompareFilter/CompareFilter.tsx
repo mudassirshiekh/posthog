@@ -18,17 +18,17 @@ export function CompareFilter(): JSX.Element | null {
 
     const disabled: boolean = !canEditInsight || !supportsCompare
 
-    // Hide compare filter control when disabled to avoid states where control is "disabled but checked"
-    if (disabled) {
-        return null
-    }
-
     useEffect(() => {
         const newCompareTo = compareFilter?.compare_to
         if (!!newCompareTo && tentativeCompareTo != newCompareTo) {
             setTentativeCompareTo(newCompareTo)
         }
     }, [compareFilter?.compare_to])
+
+    // Hide compare filter control when disabled to avoid states where control is "disabled but checked"
+    if (disabled) {
+        return null
+    }
 
     const options = [
         {

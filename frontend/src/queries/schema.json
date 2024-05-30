@@ -7682,12 +7682,6 @@
                 "breakdown_histogram_bin_count": {
                     "type": "number"
                 },
-                "compare": {
-                    "type": "boolean"
-                },
-                "compare_to": {
-                    "type": "string"
-                },
                 "decimalPlaces": {
                     "type": "number"
                 },
