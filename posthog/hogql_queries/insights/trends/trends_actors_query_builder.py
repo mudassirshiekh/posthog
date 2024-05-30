@@ -1,3 +1,4 @@
+import typing
 from datetime import datetime
 from functools import cached_property
 from typing import Optional
@@ -26,6 +27,7 @@ from posthog.schema import (
     HogQLQueryModifiers,
     TrendsFilter,
     TrendsQuery,
+    CompareFilter,
 )
 
 
@@ -93,14 +95,14 @@ class TrendsActorsQueryBuilder:
         )
 
     @cached_property
-    def trends_previous_date_range(self) -> QueryPreviousPeriodDateRange:
+    def trends_previous_date_range(self) -> QueryPreviousPeriodDateRange | QueryCompareToDateRange:
         if self.is_compare_to:
             return QueryCompareToDateRange(
                 date_range=self.trends_query.dateRange,
                 team=self.team,
                 interval=self.trends_query.interval,
                 now=datetime.now(),
-                compare_to=self.trends_query.compareFilter.compare_to,
+                compare_to=typing.cast(str, typing.cast(CompareFilter, self.trends_query.compareFilter).compare_to),
             )
         return QueryPreviousPeriodDateRange(
             date_range=self.trends_query.dateRange,
@@ -269,6 +271,7 @@ class TrendsActorsQueryBuilder:
 
     def _date_where_expr(self) -> list[ast.Expr]:
         # types
+        date_range: QueryDateRange | QueryCompareToDateRange | QueryPreviousPeriodDateRange
         if self.is_compare_previous:
             date_range = self.trends_previous_date_range
         else:
