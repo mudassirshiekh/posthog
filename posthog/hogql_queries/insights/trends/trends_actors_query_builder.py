@@ -94,24 +94,20 @@ class TrendsActorsQueryBuilder:
 
     @cached_property
     def trends_previous_date_range(self) -> QueryPreviousPeriodDateRange:
+        if self.is_compare_to:
+            return QueryCompareToDateRange(
+                date_range=self.trends_query.dateRange,
+                team=self.team,
+                interval=self.trends_query.interval,
+                now=datetime.now(),
+                compare_to=self.trends_query.compareFilter.compare_to,
+            )
         return QueryPreviousPeriodDateRange(
             date_range=self.trends_query.dateRange,
             team=self.team,
             interval=self.trends_query.interval,
             now=datetime.now(),
         )
-
-    @cached_property
-    def trends_compare_to_date_range(self):
-        if self.trends_query.trendsFilter is not None and isinstance(self.trends_query.trendsFilter.compareTo, str):
-            return QueryCompareToDateRange(
-                date_range=self.trends_query.dateRange,
-                team=self.team,
-                interval=self.trends_query.interval,
-                now=datetime.now(),
-                compare_to=self.trends_query.trendsFilter.compareTo,
-            )
-        return None
 
     @cached_property
     def trends_display(self) -> TrendsDisplay:
@@ -131,14 +127,14 @@ class TrendsActorsQueryBuilder:
     @cached_property
     def is_compare_previous(self) -> bool:
         return (
-            bool(self.trends_query.trendsFilter and self.trends_query.trendsFilter.compare)
+            bool(self.trends_query.compareFilter and self.trends_query.compareFilter.compare)
             and self.compare_value == Compare.previous
         )
 
     @cached_property
     def is_compare_to(self) -> bool:
         return (
-            bool(self.trends_query.trendsFilter and self.trends_query.trendsFilter.compareTo)
+            bool(self.trends_query.compareFilter and isinstance(self.trends_query.compareFilter.compare_to, str))
             and self.compare_value == Compare.previous
         )
 
@@ -274,10 +270,7 @@ class TrendsActorsQueryBuilder:
     def _date_where_expr(self) -> list[ast.Expr]:
         # types
         if self.is_compare_previous:
-            if self.is_compare_to:
-                date_range: QueryDateRange = self.trends_compare_to_date_range
-            else:
-                date_range = self.trends_previous_date_range
+            date_range = self.trends_previous_date_range
         else:
             date_range = self.trends_date_range
 

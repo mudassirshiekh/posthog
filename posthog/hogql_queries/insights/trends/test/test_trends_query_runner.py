@@ -32,6 +32,7 @@ from posthog.schema import (
     PropertyMathType,
     TrendsFilter,
     TrendsQuery,
+    CompareFilter,
 )
 
 from posthog.schema import Series as InsightActorsQuerySeries
@@ -177,6 +178,7 @@ class TestTrendsQueryRunner(ClickhouseTestMixin, APIBaseTest):
         series: Optional[list[EventsNode | ActionsNode]],
         trends_filters: Optional[TrendsFilter] = None,
         breakdown: Optional[BreakdownFilter] = None,
+        compare_filters: Optional[CompareFilter] = None,
         filter_test_accounts: Optional[bool] = None,
         hogql_modifiers: Optional[HogQLQueryModifiers] = None,
         limit_context: Optional[LimitContext] = None,
@@ -189,6 +191,7 @@ class TestTrendsQueryRunner(ClickhouseTestMixin, APIBaseTest):
             series=query_series,
             trendsFilter=trends_filters,
             breakdownFilter=breakdown,
+            compareFilter=compare_filters,
             filterTestAccounts=filter_test_accounts,
         )
         return TrendsQueryRunner(team=self.team, query=query, modifiers=hogql_modifiers, limit_context=limit_context)
@@ -201,6 +204,7 @@ class TestTrendsQueryRunner(ClickhouseTestMixin, APIBaseTest):
         series: Optional[list[EventsNode | ActionsNode]],
         trends_filters: Optional[TrendsFilter] = None,
         breakdown: Optional[BreakdownFilter] = None,
+        compare_filters: Optional[CompareFilter] = None,
         *,
         filter_test_accounts: Optional[bool] = None,
         hogql_modifiers: Optional[HogQLQueryModifiers] = None,
@@ -213,6 +217,7 @@ class TestTrendsQueryRunner(ClickhouseTestMixin, APIBaseTest):
             series=series,
             trends_filters=trends_filters,
             breakdown=breakdown,
+            compare_filters=compare_filters,
             filter_test_accounts=filter_test_accounts,
             hogql_modifiers=hogql_modifiers,
             limit_context=limit_context,
@@ -400,7 +405,8 @@ class TestTrendsQueryRunner(ClickhouseTestMixin, APIBaseTest):
             "2020-01-19",
             IntervalType.day,
             [EventsNode(event="$pageview"), EventsNode(event="$pageleave")],
-            TrendsFilter(formula="A+2*B", compare=True),
+            TrendsFilter(formula="A+2*B"),
+            compare_filters=CompareFilter(compare=True),
         )
 
         # one for current, one for previous
@@ -428,7 +434,8 @@ class TestTrendsQueryRunner(ClickhouseTestMixin, APIBaseTest):
             "2020-01-19",
             IntervalType.day,
             [EventsNode(event="$pageview"), EventsNode(event="$pageleave")],
-            TrendsFilter(formula="A+2*B", compare=True, compareTo="-2d"),
+            TrendsFilter(formula="A+2*B"),
+            compare_filters=CompareFilter(compare=True, compare_to="-2d"),
         )
 
         # one for current, one for previous
@@ -456,7 +463,8 @@ class TestTrendsQueryRunner(ClickhouseTestMixin, APIBaseTest):
             "2020-01-19",
             IntervalType.day,
             [EventsNode(event="$pageview"), EventsNode(event="$pageleave")],
-            TrendsFilter(formula="A+2*B", compare=True, compareTo="-1w"),
+            TrendsFilter(formula="A+2*B"),
+            compare_filters=CompareFilter(compare=True, compare_to="-1w"),
         )
 
         # one for current, one for previous
@@ -487,8 +495,8 @@ class TestTrendsQueryRunner(ClickhouseTestMixin, APIBaseTest):
             TrendsFilter(
                 formula="A+2*B",
                 display=ChartDisplayType.BoldNumber,  # total value
-                compare=True,
             ),
+            compare_filters=CompareFilter(compare=True),
         )
 
         # one for current, one for previous
@@ -518,9 +526,8 @@ class TestTrendsQueryRunner(ClickhouseTestMixin, APIBaseTest):
             TrendsFilter(
                 formula="A+2*B",
                 display=ChartDisplayType.BoldNumber,  # total value
-                compare=True,
-                compareTo="-1w",
             ),
+            compare_filters=CompareFilter(compare=True, compare_to="-1w"),
         )
 
         # one for current, one for previous
@@ -575,8 +582,9 @@ class TestTrendsQueryRunner(ClickhouseTestMixin, APIBaseTest):
             "2020-01-19",
             IntervalType.day,
             [EventsNode(event="$pageview"), EventsNode(event="$pageleave")],
-            TrendsFilter(formula="A+2*B", compare=True),
+            TrendsFilter(formula="A+2*B"),
             BreakdownFilter(breakdown_type=BreakdownType.event, breakdown="$browser"),
+            CompareFilter(compare=True),
         )
 
         # chrome, ff and edge for previous, and chrome and safari for current
@@ -605,8 +613,9 @@ class TestTrendsQueryRunner(ClickhouseTestMixin, APIBaseTest):
             "2020-01-19",
             IntervalType.day,
             [EventsNode(event="$pageview"), EventsNode(event="$pageleave")],
-            TrendsFilter(formula="A+2*B", compare=True, compareTo="-3d"),
+            TrendsFilter(formula="A+2*B"),
             BreakdownFilter(breakdown_type=BreakdownType.event, breakdown="$browser"),
+            CompareFilter(compare=True, compare_to="-3d"),
         )
 
         # chrome, ff, edge and safari for previous, and chrome and safari for current
@@ -639,9 +648,9 @@ class TestTrendsQueryRunner(ClickhouseTestMixin, APIBaseTest):
             TrendsFilter(
                 formula="A+2*B",
                 display=ChartDisplayType.BoldNumber,  # total value
-                compare=True,
             ),
             BreakdownFilter(breakdown_type=BreakdownType.event, breakdown="$browser"),
+            CompareFilter(compare=True),
         )
 
         # chrome, ff and edge for previous, and chrome and safari for current
@@ -802,7 +811,8 @@ class TestTrendsQueryRunner(ClickhouseTestMixin, APIBaseTest):
             "2020-01-19",
             IntervalType.day,
             [EventsNode(event="$pageview")],
-            TrendsFilter(compare=True),
+            TrendsFilter(),
+            compare_filters=CompareFilter(compare=True),
         )
 
         self.assertEqual(2, len(response.results))
@@ -846,7 +856,8 @@ class TestTrendsQueryRunner(ClickhouseTestMixin, APIBaseTest):
                 None,
                 IntervalType.day,
                 [EventsNode(event="$pageview")],
-                TrendsFilter(compare=True),
+                TrendsFilter(),
+                compare_filters=CompareFilter(compare=True),
             )
 
             self.assertEqual(2, len(response.results))
@@ -1085,8 +1096,9 @@ class TestTrendsQueryRunner(ClickhouseTestMixin, APIBaseTest):
             "2020-01-20",
             IntervalType.day,
             [EventsNode(event="$pageview")],
-            TrendsFilter(compare=True),
+            TrendsFilter(),
             BreakdownFilter(breakdown_type=BreakdownType.event, breakdown="$browser"),
+            CompareFilter(compare=True),
         )
 
         breakdown_labels = [result["breakdown_value"] for result in response.results]
@@ -1547,8 +1559,9 @@ class TestTrendsQueryRunner(ClickhouseTestMixin, APIBaseTest):
             "2020-01-20",
             IntervalType.day,
             [EventsNode(event="$pageview")],
-            TrendsFilter(display=ChartDisplayType.BoldNumber, compare=True),
+            TrendsFilter(display=ChartDisplayType.BoldNumber),
             None,
+            compare_filters=CompareFilter(compare=True),
         )
 
         assert len(response.results) == 2
@@ -1863,8 +1876,9 @@ class TestTrendsQueryRunner(ClickhouseTestMixin, APIBaseTest):
             "2020-01-20",
             IntervalType.day,
             [EventsNode(event="$pageview")],
-            TrendsFilter(compare=True),
+            TrendsFilter(),
             None,
+            CompareFilter(compare=True),
         )
         response = runner.to_actors_query_options()
 
@@ -1901,8 +1915,9 @@ class TestTrendsQueryRunner(ClickhouseTestMixin, APIBaseTest):
             "2020-01-20",
             IntervalType.day,
             [EventsNode(event="$pageview")],
-            TrendsFilter(compare=True, compareTo="-1w"),
+            TrendsFilter(),
             None,
+            compare_filters=CompareFilter(compare=True, compare_to="-1w"),
         )
         response = runner.to_actors_query_options()
 
