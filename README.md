@@ -21,7 +21,7 @@
   </a>
   <em>See PostHog in action</em>
 </p>
-
+#Mudassir Alam
 ## PostHog is an all-in-one, open source platform for building better products
 
 - Specify events manually, or use autocapture to get started quickly
