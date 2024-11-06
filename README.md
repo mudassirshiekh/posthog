@@ -44,6 +44,7 @@ PostHog is available with hosting in the EU or US and is fully SOC 2 compliant. 
 We're constantly adding new features, with <a href="https://posthog.com/docs/web-analytics">web analytics</a> and <a href="https://posthog.com/docs/data-warehouse">data warehouse</a> now in beta!
 
 ## Table of Contents
+# By Mudassir Alam
 
 - [Get started for free](#get-started-for-free)
 - [Docs](#docs)
